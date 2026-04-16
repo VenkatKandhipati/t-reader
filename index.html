@@ -16,11 +16,64 @@
 
     :root {
       --story-font-size: 1.25rem;
+      --bg: #e8e4dd;
+      --page-bg: #f5f0e6;
+      --navbar-bg: #d6d2cb;
+      --navbar-border: #c4bfb6;
+      --text-primary: #2c2c2c;
+      --text-secondary: #555;
+      --text-tertiary: #666;
+      --text-muted: #888;
+      --text-faint: #999;
+      --text-heading: #3a2a10;
+      --text-subheading: #6b5a3e;
+      --text-hint: #b0a48a;
+      --accent: #b5531a;
+      --accent-gold: #c8a96e;
+      --accent-green: #6b8f3a;
+      --phonetic-color: #8a6000;
+      --stats-label: #8a7a5a;
+      --stats-border: #e2d9c8;
+      --stats-section-border: #ece6d8;
+      --ring-bg: #e2d9c8;
+      --word-hover: rgba(150, 100, 10, 0.1);
+      --word-active: rgba(150, 100, 10, 0.13);
+      --word-clicked-border: #c8a96e;
+      --btn-border: #b5b0a6;
+      --btn-hover-bg: rgba(0, 0, 0, 0.05);
+    }
+
+    [data-theme="dark"] {
+      --bg: #1a1a1a;
+      --page-bg: #252525;
+      --navbar-bg: #2a2a2a;
+      --navbar-border: #3a3a3a;
+      --text-primary: #e0ddd6;
+      --text-secondary: #b0ada6;
+      --text-tertiary: #999;
+      --text-muted: #777;
+      --text-faint: #666;
+      --text-heading: #e8dcc8;
+      --text-subheading: #c4a878;
+      --text-hint: #706858;
+      --accent: #d4743a;
+      --accent-gold: #d4b478;
+      --accent-green: #8ab450;
+      --phonetic-color: #d4a830;
+      --stats-label: #b0a080;
+      --stats-border: #3a3530;
+      --stats-section-border: #353025;
+      --ring-bg: #3a3530;
+      --word-hover: rgba(200, 169, 110, 0.15);
+      --word-active: rgba(200, 169, 110, 0.2);
+      --word-clicked-border: #8a7a50;
+      --btn-border: #555;
+      --btn-hover-bg: rgba(255, 255, 255, 0.06);
     }
 
     body {
-      background: #e8e4dd;
-      color: #2c2c2c;
+      background: var(--bg);
+      color: var(--text-primary);
       min-height: 100vh;
       font-family: 'Noto Serif Telugu', 'Noto Sans Telugu', Georgia, serif;
       display: flex;
@@ -34,7 +87,7 @@
       top: 0;
       left: 0;
       height: 3px;
-      background: #b5531a;
+      background: var(--accent);
       width: 0%;
       z-index: 20;
       transition: width 0.1s linear;
@@ -46,8 +99,8 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      background: #d6d2cb;
-      border-bottom: 1px solid #c4bfb6;
+      background: var(--navbar-bg);
+      border-bottom: 1px solid var(--navbar-border);
       padding: 0.6rem 1.2rem;
       position: sticky;
       top: 0;
@@ -60,11 +113,11 @@
       gap: 0.5rem;
       font-family: 'Noto Sans Telugu', sans-serif;
       font-size: 0.85rem;
-      color: #555;
+      color: var(--text-secondary);
       cursor: pointer;
     }
 
-    .nav-left:hover { color: #333; }
+    .nav-left:hover { color: var(--text-primary); }
 
     .nav-left svg {
       width: 18px;
@@ -75,7 +128,7 @@
       font-family: 'Noto Sans Telugu', sans-serif;
       font-size: 0.95rem;
       font-weight: 500;
-      color: #444;
+      color: var(--text-secondary);
     }
 
     .nav-right {
@@ -88,7 +141,7 @@
       background: none;
       border: none;
       cursor: pointer;
-      color: #666;
+      color: var(--text-tertiary);
       padding: 0.3rem;
       border-radius: 4px;
       display: flex;
@@ -96,7 +149,7 @@
       transition: color 0.15s;
     }
 
-    .nav-btn:hover { color: #333; }
+    .nav-btn:hover { color: var(--text-primary); }
 
     .nav-btn svg {
       width: 20px;
@@ -105,10 +158,10 @@
 
     .font-size-btn {
       background: none;
-      border: 1px solid #b5b0a6;
+      border: 1px solid var(--btn-border);
       border-radius: 4px;
       cursor: pointer;
-      color: #666;
+      color: var(--text-tertiary);
       padding: 0.15rem 0.45rem;
       font-family: Georgia, serif;
       font-size: 0.8rem;
@@ -118,8 +171,8 @@
     }
 
     .font-size-btn:hover {
-      color: #333;
-      background: rgba(0,0,0,0.05);
+      color: var(--text-primary);
+      background: var(--btn-hover-bg);
     }
 
     /* ── Page Content ────────────────────────────────────────── */
@@ -134,7 +187,7 @@
     }
 
     .page {
-      background: #f5f0e6;
+      background: var(--page-bg);
       border-radius: 4px;
       box-shadow:
         0 1px 4px rgba(0,0,0,0.06),
@@ -148,7 +201,7 @@
     /* ── Stats Panel ─────────────────────────────────────────── */
 
     .stats-panel {
-      background: #f5f0e6;
+      background: var(--page-bg);
       border-radius: 4px;
       box-shadow:
         0 1px 4px rgba(0,0,0,0.06),
@@ -167,10 +220,10 @@
     .stats-heading {
       font-size: 0.85rem;
       font-weight: 700;
-      color: #3a2a10;
+      color: var(--text-heading);
       margin-bottom: 1rem;
       padding-bottom: 0.5rem;
-      border-bottom: 1px solid #e2d9c8;
+      border-bottom: 1px solid var(--stats-border);
     }
 
     .proficiency-ring {
@@ -187,30 +240,34 @@
 
     .proficiency-ring .ring-bg {
       fill: none;
-      stroke: #e2d9c8;
+      stroke: var(--ring-bg);
       stroke-width: 8;
     }
 
     .proficiency-ring .ring-fill {
       fill: none;
-      stroke: #6b8f3a;
+      stroke: var(--accent-green);
       stroke-width: 8;
       stroke-linecap: round;
       transition: stroke-dashoffset 0.4s ease;
     }
 
+    .ring-fill.ring-high { stroke: var(--accent-green); }
+    .ring-fill.ring-mid  { stroke: var(--accent-gold); }
+    .ring-fill.ring-low  { stroke: var(--accent); }
+
     .proficiency-pct {
       font-family: Georgia, serif;
       font-size: 1.3rem;
       font-weight: 700;
-      color: #3a2a10;
+      color: var(--text-heading);
       margin-top: -66px;
       margin-bottom: 40px;
     }
 
     .proficiency-label {
       font-size: 0.7rem;
-      color: #8a7a5a;
+      color: var(--stats-label);
       margin-top: 0.2rem;
     }
 
@@ -220,24 +277,24 @@
       align-items: center;
       padding: 0.4rem 0;
       font-size: 0.78rem;
-      color: #555;
-      border-bottom: 1px solid #ece6d8;
+      color: var(--text-secondary);
+      border-bottom: 1px solid var(--stats-section-border);
     }
 
     .stat-row:last-child { border-bottom: none; }
 
-    .stat-label { color: #6b5a3e; }
+    .stat-label { color: var(--text-subheading); }
 
     .stat-value {
       font-family: Georgia, serif;
       font-weight: 600;
-      color: #3a2a10;
+      color: var(--text-heading);
     }
 
     .stats-section-title {
       font-size: 0.72rem;
       font-weight: 600;
-      color: #8a7a5a;
+      color: var(--stats-label);
       text-transform: uppercase;
       letter-spacing: 0.04em;
       margin-top: 1rem;
@@ -250,34 +307,34 @@
       align-items: center;
       padding: 0.3rem 0;
       font-size: 0.78rem;
-      border-bottom: 1px solid #ece6d8;
+      border-bottom: 1px solid var(--stats-section-border);
     }
 
     .top-word:last-child { border-bottom: none; }
 
     .top-word-text {
       font-family: 'Noto Serif Telugu', serif;
-      color: #2a2a2a;
+      color: var(--text-primary);
     }
 
     .top-word-phonetic {
       font-family: Georgia, serif;
       font-size: 0.65rem;
-      color: #8a6000;
+      color: var(--phonetic-color);
       margin-left: 0.3rem;
     }
 
     .top-word-count {
       font-family: Georgia, serif;
       font-size: 0.7rem;
-      color: #999;
+      color: var(--text-faint);
       flex-shrink: 0;
       margin-left: 0.5rem;
     }
 
     .stats-empty {
       font-size: 0.75rem;
-      color: #b0a48a;
+      color: var(--text-hint);
       font-style: italic;
       font-family: Georgia, serif;
       text-align: center;
@@ -290,22 +347,22 @@
       margin-top: 1rem;
       padding: 0.35rem 0;
       background: none;
-      border: 1px solid #c4bfb6;
+      border: 1px solid var(--navbar-border);
       border-radius: 4px;
       cursor: pointer;
       font-family: 'Noto Sans Telugu', sans-serif;
       font-size: 0.72rem;
-      color: #888;
+      color: var(--text-muted);
       transition: background 0.15s, color 0.15s;
     }
 
     .stats-reset:hover {
-      background: rgba(0,0,0,0.04);
-      color: #555;
+      background: var(--btn-hover-bg);
+      color: var(--text-secondary);
     }
 
     .word.was-clicked {
-      border-bottom: 1px dotted #c8a96e;
+      border-bottom: 1px dotted var(--word-clicked-border);
     }
 
     /* ── Chapter Headings ────────────────────────────────────── */
@@ -319,7 +376,7 @@
       font-family: 'Noto Serif Telugu', serif;
       font-size: 1.6rem;
       font-weight: 700;
-      color: #3a2a10;
+      color: var(--text-heading);
       margin-bottom: 0.3rem;
     }
 
@@ -328,7 +385,7 @@
       font-size: 1rem;
       font-style: italic;
       font-weight: 400;
-      color: #6b5a3e;
+      color: var(--text-subheading);
       margin-bottom: 0.3rem;
     }
 
@@ -336,7 +393,7 @@
       font-family: 'Noto Serif Telugu', serif;
       font-size: 1.15rem;
       font-weight: 400;
-      color: #6b5a3e;
+      color: var(--text-subheading);
     }
 
     /* ── Daily Badge ─────────────────────────────────────────── */
@@ -346,7 +403,7 @@
       font-family: 'Noto Sans Telugu', sans-serif;
       font-size: 0.7rem;
       font-style: normal;
-      background: #c8a96e;
+      background: var(--accent-gold);
       color: #fff;
       border-radius: 10px;
       padding: 0.15rem 0.55rem;
@@ -362,7 +419,7 @@
       font-family: 'Noto Serif Telugu', 'Noto Sans Telugu', serif;
       font-size: var(--story-font-size);
       line-height: 2.6;
-      color: #2a2a2a;
+      color: var(--text-primary);
       text-align: left;
     }
 
@@ -379,18 +436,18 @@
       transition: background-color 0.12s ease;
     }
 
-    .word:hover { background-color: rgba(150, 100, 10, 0.1); }
+    .word:hover { background-color: var(--word-hover); }
 
-    .word.active { background-color: rgba(150, 100, 10, 0.13); }
+    .word.active { background-color: var(--word-active); }
 
     .phonetic {
       position: absolute;
       bottom: 100%;
       left: 50%;
       transform: translateX(-50%);
-      font-size: 0.65rem;
+      font-size: 0.52em;
       font-family: Georgia, 'Times New Roman', serif;
-      color: #8a6000;
+      color: var(--phonetic-color);
       white-space: nowrap;
       pointer-events: none;
       line-height: 1;
@@ -406,27 +463,27 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      background: #d6d2cb;
-      border-top: 1px solid #c4bfb6;
+      background: var(--navbar-bg);
+      border-top: 1px solid var(--navbar-border);
       padding: 0.5rem 1.2rem;
       font-family: 'Noto Sans Telugu', sans-serif;
       font-size: 0.8rem;
-      color: #666;
+      color: var(--text-tertiary);
     }
 
     .bottom-bar button {
       background: none;
-      border: 1px solid #b5b0a6;
+      border: 1px solid var(--btn-border);
       border-radius: 4px;
       padding: 0.3rem 0.8rem;
       cursor: pointer;
       font-family: 'Noto Sans Telugu', sans-serif;
       font-size: 0.8rem;
-      color: #555;
+      color: var(--text-secondary);
       transition: background 0.15s, opacity 0.15s;
     }
 
-    .bottom-bar button:hover { background: rgba(0,0,0,0.05); }
+    .bottom-bar button:hover { background: var(--btn-hover-bg); }
 
     .bottom-bar button:disabled {
       opacity: 0.35;
@@ -444,11 +501,11 @@
 
     .story-counter {
       font-size: 0.8rem;
-      color: #666;
+      color: var(--text-tertiary);
     }
 
     .word-count {
-      color: #999;
+      color: var(--text-faint);
       font-size: 0.72rem;
     }
 
@@ -457,12 +514,36 @@
     .hint {
       text-align: center;
       font-size: 0.78rem;
-      color: #b0a48a;
+      color: var(--text-hint);
       font-style: italic;
       font-family: Georgia, serif;
       padding: 0.5rem 0 0;
       margin-top: 2rem;
-      border-top: 1px solid #e2d9c8;
+      border-top: 1px solid var(--stats-border);
+    }
+
+    /* ── Theme Toggle ────────────────────────────────────────── */
+
+    .theme-toggle {
+      background: none;
+      border: 1px solid var(--btn-border);
+      border-radius: 4px;
+      cursor: pointer;
+      color: var(--text-tertiary);
+      padding: 0.2rem 0.4rem;
+      display: flex;
+      align-items: center;
+      transition: color 0.15s, background 0.15s;
+    }
+
+    .theme-toggle:hover {
+      color: var(--text-primary);
+      background: var(--btn-hover-bg);
+    }
+
+    .theme-toggle svg {
+      width: 18px;
+      height: 18px;
     }
 
     /* ── Responsive ──────────────────────────────────────────── */
@@ -500,6 +581,7 @@
       .stats-panel { border-radius: 0; }
     }
   </style>
+  <script>(function(){ var t=localStorage.getItem('theme'); if(t) document.documentElement.dataset.theme=t; })();</script>
 </head>
 <body>
 
@@ -514,6 +596,11 @@
     </a>
     <div class="nav-title">తెలుగు కథలు</div>
     <div class="nav-right">
+      <button class="theme-toggle" id="themeToggleBtn" title="Toggle dark mode">
+        <svg id="themeIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+        </svg>
+      </button>
       <button class="font-size-btn" id="fontDecBtn" title="Decrease font size">A−</button>
       <button class="font-size-btn" id="fontIncBtn" title="Increase font size">A+</button>
       <button class="nav-btn" id="toggleAllBtn" title="Show/hide all transliterations">
@@ -691,6 +778,42 @@
       return result;
     }
 
+    // ── Progress Persistence ────────────────────────────────────────────────
+
+    function getStoryProgress() {
+      try {
+        return JSON.parse(localStorage.getItem('storyProgress')) || {};
+      } catch { return {}; }
+    }
+
+    function saveStoryProgress(storyIndex, pct) {
+      const progress = getStoryProgress();
+      const key = String(storyIndex);
+      const existing = progress[key];
+      const today = new Date().toISOString().slice(0, 10);
+
+      if (!existing || pct > existing.bestPct) {
+        progress[key] = { bestPct: pct, lastRead: today };
+      } else {
+        progress[key].lastRead = today;
+      }
+      localStorage.setItem('storyProgress', JSON.stringify(progress));
+    }
+
+    function recordReadingDate() {
+      try {
+        const dates = JSON.parse(localStorage.getItem('readingDates')) || [];
+        const today = new Date().toISOString().slice(0, 10);
+        if (dates[0] !== today) {
+          dates.unshift(today);
+          if (dates.length > 365) dates.length = 365;
+          localStorage.setItem('readingDates', JSON.stringify(dates));
+        }
+      } catch {
+        localStorage.setItem('readingDates', JSON.stringify([new Date().toISOString().slice(0, 10)]));
+      }
+    }
+
     // ── Reading Stats ────────────────────────────────────────────────────────
 
     let totalWords = 0;
@@ -726,11 +849,15 @@
       const offset = circumference - (pct / 100) * circumference;
       document.getElementById('proficiencyRing').setAttribute('stroke-dashoffset', offset);
 
+      // Save progress (only if user has actually clicked words)
+      if (totalClicks > 0) saveStoryProgress(currentIndex, pct);
+
       // Update ring color based on proficiency
       const ring = document.getElementById('proficiencyRing');
-      if (pct >= 80) ring.style.stroke = '#6b8f3a';
-      else if (pct >= 50) ring.style.stroke = '#c8a96e';
-      else ring.style.stroke = '#b5531a';
+      ring.classList.remove('ring-high', 'ring-mid', 'ring-low');
+      if (pct >= 80) ring.classList.add('ring-high');
+      else if (pct >= 50) ring.classList.add('ring-mid');
+      else ring.classList.add('ring-low');
 
       // Top clicked words (up to 5)
       const topWordsEl = document.getElementById('topWords');
@@ -814,9 +941,10 @@
         if (teluguWords) wordCount += teluguWords.length;
       }
 
-      // Update stats
+      // Update stats and record reading date
       totalWords = wordCount;
       resetStats();
+      recordReadingDate();
 
       // Update bottom bar
       document.getElementById('wordCount').textContent = wordCount + ' పదాలు';
@@ -854,6 +982,27 @@
     document.getElementById('nextBtn').addEventListener('click', () => {
       if (currentIndex < STORIES.length - 1) loadStory(currentIndex + 1);
     });
+
+    // ── Theme Toggle ──────────────────────────────────────────────────────
+
+    function updateThemeIcon(theme) {
+      const icon = document.getElementById('themeIcon');
+      if (theme === 'dark') {
+        icon.innerHTML = '<circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>';
+      } else {
+        icon.innerHTML = '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>';
+      }
+    }
+
+    document.getElementById('themeToggleBtn').addEventListener('click', () => {
+      const current = document.documentElement.dataset.theme || 'light';
+      const next = current === 'dark' ? 'light' : 'dark';
+      document.documentElement.dataset.theme = next;
+      localStorage.setItem('theme', next);
+      updateThemeIcon(next);
+    });
+
+    updateThemeIcon(document.documentElement.dataset.theme || 'light');
 
     // ── Font Size Controls ─────────────────────────────────────────────────
 

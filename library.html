@@ -14,9 +14,51 @@
       padding: 0;
     }
 
+    :root {
+      --bg: #e8e4dd;
+      --page-bg: #f5f0e6;
+      --text-primary: #2c2c2c;
+      --text-heading: #3a2a10;
+      --text-hint: #b0a48a;
+      --stats-label: #8a7a5a;
+      --accent: #b5531a;
+      --accent-gold: #c8a96e;
+      --accent-green: #6b8f3a;
+      --ring-bg: #e2d9c8;
+      --tooltip-bg: #3a2a10;
+      --tooltip-text: #f5f0e6;
+      --shelf-plank-start: #b5915a;
+      --shelf-plank-mid: #9c7a48;
+      --shelf-plank-end: #87693d;
+      --btn-border: #b5b0a6;
+      --btn-hover-bg: rgba(0, 0, 0, 0.05);
+      --text-tertiary: #666;
+    }
+
+    [data-theme="dark"] {
+      --bg: #1a1a1a;
+      --page-bg: #252525;
+      --text-primary: #e0ddd6;
+      --text-heading: #e8dcc8;
+      --text-hint: #706858;
+      --stats-label: #b0a080;
+      --accent: #d4743a;
+      --accent-gold: #d4b478;
+      --accent-green: #8ab450;
+      --ring-bg: #3a3530;
+      --tooltip-bg: #e8dcc8;
+      --tooltip-text: #1a1a1a;
+      --shelf-plank-start: #4a3a25;
+      --shelf-plank-mid: #3d3020;
+      --shelf-plank-end: #33281a;
+      --btn-border: #555;
+      --btn-hover-bg: rgba(255, 255, 255, 0.06);
+      --text-tertiary: #999;
+    }
+
     body {
-      background: #e8e4dd;
-      color: #2c2c2c;
+      background: var(--bg);
+      color: var(--text-primary);
       min-height: 100vh;
       font-family: 'Noto Serif Telugu', 'Noto Sans Telugu', Georgia, serif;
     }
@@ -26,20 +68,21 @@
     .header {
       text-align: center;
       padding: 2.5rem 1rem 1rem;
+      position: relative;
     }
 
     .header h1 {
       font-family: 'Noto Serif Telugu', serif;
       font-size: 1.8rem;
       font-weight: 700;
-      color: #3a2a10;
+      color: var(--text-heading);
       margin-bottom: 0.3rem;
     }
 
     .header p {
       font-family: 'Noto Sans Telugu', sans-serif;
       font-size: 0.85rem;
-      color: #8a7a5a;
+      color: var(--stats-label);
     }
 
     /* ── Bookshelf ───────────────────────────────────── */
@@ -69,7 +112,7 @@
       left: 0;
       right: 0;
       height: 14px;
-      background: linear-gradient(180deg, #b5915a 0%, #9c7a48 40%, #87693d 100%);
+      background: linear-gradient(180deg, var(--shelf-plank-start) 0%, var(--shelf-plank-mid) 40%, var(--shelf-plank-end) 100%);
       border-radius: 0 0 3px 3px;
       box-shadow:
         0 4px 8px rgba(80, 50, 10, 0.25),
@@ -198,8 +241,8 @@
       bottom: calc(100% + 12px);
       left: 50%;
       transform: translateX(-50%);
-      background: #3a2a10;
-      color: #f5f0e6;
+      background: var(--tooltip-bg);
+      color: var(--tooltip-text);
       padding: 8px 14px;
       border-radius: 6px;
       font-family: 'Noto Sans Telugu', sans-serif;
@@ -219,7 +262,7 @@
       left: 50%;
       transform: translateX(-50%);
       border: 6px solid transparent;
-      border-top-color: #3a2a10;
+      border-top-color: var(--tooltip-bg);
     }
 
     .book:hover .book-tooltip {
@@ -247,7 +290,7 @@
     .tooltip-badge {
       display: inline-block;
       font-size: 0.6rem;
-      background: #c8a96e;
+      background: var(--accent-gold);
       color: #fff;
       border-radius: 8px;
       padding: 1px 6px;
@@ -266,6 +309,96 @@
       opacity: 0.4;
       user-select: none;
       flex-shrink: 0;
+    }
+
+    /* ── Header Actions (theme toggle) ──────────────── */
+
+    .header-actions {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+    }
+
+    .theme-toggle {
+      background: none;
+      border: 1px solid var(--btn-border);
+      border-radius: 4px;
+      cursor: pointer;
+      color: var(--text-tertiary);
+      padding: 0.2rem 0.4rem;
+      display: flex;
+      align-items: center;
+      transition: color 0.15s, background 0.15s;
+    }
+
+    .theme-toggle:hover {
+      color: var(--text-primary);
+      background: var(--btn-hover-bg);
+    }
+
+    .theme-toggle svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    /* ── Streak Badge ────────────────────────────────── */
+
+    .streak-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      font-family: 'Noto Sans Telugu', sans-serif;
+      font-size: 0.82rem;
+      color: var(--accent);
+      margin-top: 0.5rem;
+    }
+
+    .streak-badge svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    .streak-count {
+      font-family: Georgia, serif;
+      font-weight: 700;
+    }
+
+    .streak-label {
+      color: var(--stats-label);
+      font-size: 0.75rem;
+    }
+
+    /* ── Progress Badge on Books ──────────────────────── */
+
+    .book-progress {
+      position: absolute;
+      bottom: 8px;
+      right: -4px;
+      width: 22px;
+      height: 22px;
+      z-index: 3;
+      background: var(--bg);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .book-progress svg {
+      width: 20px;
+      height: 20px;
+    }
+
+    .book-progress .mini-ring-bg {
+      fill: none;
+      stroke: var(--ring-bg);
+      stroke-width: 3;
+    }
+
+    .book-progress .mini-ring-fill {
+      fill: none;
+      stroke-width: 3;
+      stroke-linecap: round;
     }
 
     /* ── Responsive ──────────────────────────────────── */
@@ -288,12 +421,25 @@
       .spine-title { font-size: 0.7rem; }
     }
   </style>
+  <script>(function(){ var t=localStorage.getItem('theme'); if(t) document.documentElement.dataset.theme=t; })();</script>
 </head>
 <body>
 
   <div class="header">
+    <div class="header-actions">
+      <button class="theme-toggle" id="themeToggleBtn" title="Toggle dark mode">
+        <svg id="themeIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+        </svg>
+      </button>
+    </div>
     <h1>పుస్తకాలయం</h1>
     <p>ఒక కథ ఎంచుకోండి &middot; Pick a story to read</p>
+    <div class="streak-badge" id="streakBadge" style="display:none;">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2c.5 3.5-1.5 6-1.5 6s2 1.5 2 4c0 2-1.5 3-3 3s-2.5-1-2.5-3c0-1.5.5-2.5.5-2.5S6 11 6 8.5C6 5 9 2 12 2z"/></svg>
+      <span class="streak-count" id="streakCount"></span>
+      <span class="streak-label">day streak</span>
+    </div>
   </div>
 
   <div class="bookshelf" id="bookshelf"></div>
@@ -315,6 +461,71 @@
     }
 
     const dailyIndex = getDailyStoryIndex();
+
+    // ── Theme Toggle ──────────────────────────────────────────────────────
+
+    function updateThemeIcon(theme) {
+      const icon = document.getElementById('themeIcon');
+      if (theme === 'dark') {
+        icon.innerHTML = '<circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>';
+      } else {
+        icon.innerHTML = '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>';
+      }
+    }
+
+    document.getElementById('themeToggleBtn').addEventListener('click', () => {
+      const current = document.documentElement.dataset.theme || 'light';
+      const next = current === 'dark' ? 'light' : 'dark';
+      document.documentElement.dataset.theme = next;
+      localStorage.setItem('theme', next);
+      updateThemeIcon(next);
+    });
+
+    updateThemeIcon(document.documentElement.dataset.theme || 'light');
+
+    // ── Progress Utilities ────────────────────────────────────────────────
+
+    function getStoryProgress() {
+      try {
+        return JSON.parse(localStorage.getItem('storyProgress')) || {};
+      } catch { return {}; }
+    }
+
+    // ── Streak Calculation ────────────────────────────────────────────────
+
+    function calculateStreak() {
+      try {
+        const dates = JSON.parse(localStorage.getItem('readingDates')) || [];
+        if (!dates.length) return 0;
+
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+
+        const mostRecent = new Date(dates[0] + 'T00:00:00');
+        const diffDays = Math.floor((today - mostRecent) / 86400000);
+        if (diffDays > 1) return 0;
+
+        let streak = 1;
+        for (let i = 1; i < dates.length; i++) {
+          const prev = new Date(dates[i - 1] + 'T00:00:00');
+          const curr = new Date(dates[i] + 'T00:00:00');
+          const gap = Math.floor((prev - curr) / 86400000);
+          if (gap === 1) streak++;
+          else break;
+        }
+        return streak;
+      } catch { return 0; }
+    }
+
+    const streak = calculateStreak();
+    if (streak > 0) {
+      document.getElementById('streakBadge').style.display = 'inline-flex';
+      document.getElementById('streakCount').textContent = streak;
+      document.querySelector('.streak-label').textContent =
+        streak === 1 ? 'day streak' : 'day streak';
+    }
+
+    // ── Build Shelf ───────────────────────────────────────────────────────
 
     function buildShelf() {
       const container = document.getElementById('bookshelf');
@@ -371,6 +582,30 @@
 
         link.appendChild(spine);
         link.appendChild(tooltip);
+
+        // Progress badge
+        const progress = getStoryProgress();
+        const storyProg = progress[String(i)];
+        if (storyProg && storyProg.bestPct !== undefined) {
+          const pct = storyProg.bestPct;
+          const circumference = 2 * Math.PI * 7;
+          const offset = circumference - (pct / 100) * circumference;
+          let strokeColor;
+          if (pct >= 80) strokeColor = 'var(--accent-green)';
+          else if (pct >= 50) strokeColor = 'var(--accent-gold)';
+          else strokeColor = 'var(--accent)';
+
+          const badge = document.createElement('div');
+          badge.className = 'book-progress';
+          badge.innerHTML = `<svg viewBox="0 0 20 20"><circle class="mini-ring-bg" cx="10" cy="10" r="7"/><circle class="mini-ring-fill" cx="10" cy="10" r="7" stroke="${strokeColor}" stroke-dasharray="${circumference.toFixed(2)}" stroke-dashoffset="${offset.toFixed(2)}" transform="rotate(-90 10 10)"/></svg>`;
+          link.appendChild(badge);
+
+          const tipPct = document.createElement('div');
+          tipPct.className = 'tooltip-collection';
+          tipPct.textContent = 'Best: ' + pct + '% proficiency';
+          tooltip.appendChild(tipPct);
+        }
+
         shelf.appendChild(link);
       });
 
