@@ -3,10 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Telugu Reading Practice</title>
+  <title>తెలుగు కథలు — Telugu Reading Practice</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Telugu:wght@400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Telugu:wght@400;500;700&family=Noto+Serif+Telugu:wght@400;700&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after {
       box-sizing: border-box;
@@ -15,101 +15,360 @@
     }
 
     body {
-      background: #faf8f3;
-      color: #1c1c1c;
+      background: #e8e4dd;
+      color: #2c2c2c;
       min-height: 100vh;
-      font-family: Georgia, 'Times New Roman', serif;
+      font-family: 'Noto Serif Telugu', 'Noto Sans Telugu', Georgia, serif;
+      display: flex;
+      flex-direction: column;
     }
 
-    .container {
-      max-width: 780px;
-      margin: 0 auto;
-      padding: 3rem 2rem 5rem;
+    /* ── Top Nav Bar ─────────────────────────────────────────── */
+
+    .navbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #d6d2cb;
+      border-bottom: 1px solid #c4bfb6;
+      padding: 0.6rem 1.2rem;
+      position: sticky;
+      top: 0;
+      z-index: 10;
     }
 
-    header {
-      margin-bottom: 2.5rem;
-      padding-bottom: 1.5rem;
-      border-bottom: 1px solid #e2d9c8;
-    }
-
-    .title-te {
+    .nav-left {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
       font-family: 'Noto Sans Telugu', sans-serif;
-      font-size: 1.6rem;
-      color: #4a3000;
-      margin-bottom: 0.4rem;
+      font-size: 0.85rem;
+      color: #555;
+      cursor: pointer;
     }
 
-    .subtitle {
-      font-size: 0.9rem;
-      color: #aaa;
-      font-style: italic;
+    .nav-left:hover { color: #333; }
+
+    .nav-left svg {
+      width: 18px;
+      height: 18px;
     }
+
+    .nav-title {
+      font-family: 'Noto Sans Telugu', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 500;
+      color: #444;
+    }
+
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+    }
+
+    .nav-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: #666;
+      padding: 0.3rem;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      transition: color 0.15s;
+    }
+
+    .nav-btn:hover { color: #333; }
+
+    .nav-btn svg {
+      width: 20px;
+      height: 20px;
+    }
+
+    /* ── Page Content ────────────────────────────────────────── */
+
+    .page-wrapper {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      padding: 2rem 1.5rem 1rem;
+    }
+
+    .page {
+      background: #f5f0e6;
+      border-radius: 4px;
+      box-shadow:
+        0 1px 4px rgba(0,0,0,0.06),
+        0 0 0 1px rgba(0,0,0,0.03);
+      max-width: 800px;
+      width: 100%;
+      padding: 3rem 3.5rem 3rem;
+      position: relative;
+    }
+
+    /* ── Chapter Headings ────────────────────────────────────── */
+
+    .chapter-heading {
+      text-align: center;
+      margin-bottom: 2.5rem;
+    }
+
+    .chapter-heading .part {
+      font-family: 'Noto Serif Telugu', serif;
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: #3a2a10;
+      margin-bottom: 0.3rem;
+    }
+
+    .chapter-heading .chapter {
+      font-family: 'Noto Serif Telugu', serif;
+      font-size: 1.15rem;
+      font-weight: 400;
+      color: #6b5a3e;
+    }
+
+    /* ── Daily Badge ─────────────────────────────────────────── */
+
+    .daily-badge {
+      display: inline-block;
+      font-family: 'Noto Sans Telugu', sans-serif;
+      font-size: 0.7rem;
+      font-style: normal;
+      background: #c8a96e;
+      color: #fff;
+      border-radius: 10px;
+      padding: 0.15rem 0.55rem;
+      margin-top: 0.5rem;
+      letter-spacing: 0.03em;
+    }
+
+    .daily-badge.hidden { display: none; }
+
+    /* ── Story Text ──────────────────────────────────────────── */
 
     .story {
-      font-family: 'Noto Sans Telugu', sans-serif;
-      font-size: 22px;
-      line-height: 3em;
-      color: #111;
+      font-family: 'Noto Serif Telugu', 'Noto Sans Telugu', serif;
+      font-size: 1.25rem;
+      line-height: 2.6;
+      color: #2a2a2a;
+      text-align: left;
     }
 
-    .story p + p {
-      margin-top: 2.5rem;
-    }
+    .story p { margin-bottom: 1.8rem; }
+    .story p:last-child { margin-bottom: 0; }
+
+    /* ── Clickable Words ─────────────────────────────────────── */
 
     .word {
       position: relative;
-      display: inline-block;
+      display: inline;
       cursor: pointer;
       border-radius: 3px;
-      padding: 0 1px;
       transition: background-color 0.12s ease;
     }
 
-    .word:hover {
-      background-color: rgba(150, 100, 10, 0.09);
-    }
+    .word:hover { background-color: rgba(150, 100, 10, 0.1); }
+
+    .word.active { background-color: rgba(150, 100, 10, 0.13); }
 
     .phonetic {
       position: absolute;
       bottom: 100%;
       left: 50%;
       transform: translateX(-50%);
-      font-size: 11px;
-      font-family: Georgia, serif;
+      font-size: 0.65rem;
+      font-family: Georgia, 'Times New Roman', serif;
       color: #8a6000;
       white-space: nowrap;
       pointer-events: none;
       line-height: 1;
-      padding-bottom: 3px;
+      padding-bottom: 2px;
+      letter-spacing: 0.02em;
     }
 
-    .phonetic.hidden {
-      display: none;
-    }
+    .phonetic.hidden { display: none; }
 
-    footer {
-      margin-top: 3rem;
-      text-align: center;
+    /* ── Bottom Bar ──────────────────────────────────────────── */
+
+    .bottom-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #d6d2cb;
+      border-top: 1px solid #c4bfb6;
+      padding: 0.5rem 1.2rem;
+      font-family: 'Noto Sans Telugu', sans-serif;
       font-size: 0.8rem;
-      color: #ccc;
+      color: #666;
+    }
+
+    .bottom-bar button {
+      background: none;
+      border: 1px solid #b5b0a6;
+      border-radius: 4px;
+      padding: 0.3rem 0.8rem;
+      cursor: pointer;
+      font-family: 'Noto Sans Telugu', sans-serif;
+      font-size: 0.8rem;
+      color: #555;
+      transition: background 0.15s, opacity 0.15s;
+    }
+
+    .bottom-bar button:hover { background: rgba(0,0,0,0.05); }
+
+    .bottom-bar button:disabled {
+      opacity: 0.35;
+      cursor: default;
+    }
+
+    .bottom-bar button:disabled:hover { background: none; }
+
+    .page-info {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.2rem;
+    }
+
+    .story-counter {
+      font-size: 0.8rem;
+      color: #666;
+    }
+
+    .word-count {
+      color: #999;
+      font-size: 0.72rem;
+    }
+
+    /* ── Hint Banner ─────────────────────────────────────────── */
+
+    .hint {
+      text-align: center;
+      font-size: 0.78rem;
+      color: #b0a48a;
+      font-style: italic;
+      font-family: Georgia, serif;
+      padding: 0.5rem 0 0;
+      margin-top: 2rem;
+      border-top: 1px solid #e2d9c8;
+    }
+
+    /* ── Responsive ──────────────────────────────────────────── */
+
+    @media (max-width: 640px) {
+      .page {
+        padding: 2rem 1.5rem;
+        border-radius: 0;
+      }
+
+      .page-wrapper { padding: 1rem 0; }
+
+      .story {
+        font-size: 1.1rem;
+        line-height: 2.4;
+      }
+
+      .chapter-heading .part { font-size: 1.3rem; }
+      .chapter-heading .chapter { font-size: 1rem; }
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <header>
-      <div class="title-te">తెలుగు చదవండి</div>
-      <p class="subtitle">Click any word to reveal its pronunciation &middot; Click again to hide</p>
-    </header>
-    <div id="story" class="story"></div>
-    <footer>Telugu Reading Practice</footer>
+
+  <!-- Top Navigation -->
+  <nav class="navbar">
+    <div class="nav-left">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+      <span>పుస్తకాలు</span>
+    </div>
+    <div class="nav-title">తెలుగు కథలు</div>
+    <div class="nav-right">
+      <button class="nav-btn" id="toggleAllBtn" title="Show/hide all transliterations">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Page Content -->
+  <div class="page-wrapper">
+    <div class="page">
+      <div class="chapter-heading">
+        <div class="part" id="storyTitle"></div>
+        <div class="chapter" id="storyCollection"></div>
+        <span class="daily-badge hidden" id="dailyBadge">నేటి కథ · Today's Story</span>
+      </div>
+      <div id="story" class="story"></div>
+      <div class="hint">పదాన్ని నొక్కితే ఉచ్చారణ కనిపిస్తుంది &middot; Click a word to see its pronunciation</div>
+    </div>
+  </div>
+
+  <!-- Bottom Bar -->
+  <div class="bottom-bar">
+    <button id="prevBtn">← వెనుక</button>
+    <div class="page-info">
+      <span id="storyCounter" class="story-counter"></span>
+      <span id="wordCount" class="word-count"></span>
+    </div>
+    <button id="nextBtn">తరువాత →</button>
   </div>
 
   <script>
-    const STORY = `సుందరవనంలో ఓ నక్క ఉండేది. దానికి స్వార్థం చాలా ఎక్కువ. అడవిలో ఉండే జంతువులకు ఎప్పుడూ తప్పుడు సలహాలు ఇస్తుండేది. దాని గురించి తెలియని చాలా జంతువులు మోసపోయేవి. ఒకసారి అది అడవిలో తిరుగుతూ, విశ్రాంతి తీసుకుందామని ఓ మామిడి చెట్టు కింద కూర్చుంది. అప్పుడే అక్కడికి ఆకలితో ఉన్న ఓ కోతి వచ్చింది. ఆ చెట్టు చిటారు కొమ్మన రెండే పండ్లు ఉన్నాయి. 'హమ్మయ్యా! వెతుక్కుంటూ ఇంత దూరం వచ్చినందుకు ఆహారం దొరికింది. ఆ పండ్లు కోసుకుని తినేస్తా!' అనుకుంది. మెల్లగా చెట్టు ఎక్కబోతోంది. అప్పుడు నక్క.. 'ఎందుకు అంత శ్రమపడతావు. అదుగో అక్కడున్న కర్ర తీసుకుని కొడితే ఆ పండ్లు కింద పడతాయి. ఎంచక్కా తినేయొచ్చు' అంది. 'భలే సలహా ఇచ్చావు..' అంటూ కర్ర తీసుకుని కొట్టింది కోతి. దాంతో ఆ రెండు మామిడి పండ్లు పక్కనే ఉన్న కొలనులో పడ్డాయి.
+    // ── Story Bank ───────────────────────────────────────────────────────────
 
-చేతిదాకా వచ్చిన ఆహారం నోటికి అందకపోవడంతో కోతి చాలా బాధపడింది. అది చూసి వెంటనే అక్కడి నుంచి వెళ్లిపోయింది నక్క. 'ఇప్పుడు మళ్లీ ఆహారం వెతుక్కోవాలి!' అనుకుంటూ కోతి దిగాలుగా కూర్చుంది. అదంతా గమనిస్తున్న చిలుక.. 'మిత్రమా! చెట్లు ఎక్కడం నీకు వెన్నతో పెట్టిన విద్య. అయినా ఆ నక్క మాటలు విని నువ్వు మోసపోయావు. అదేదో కర్రతో కొట్టమని చెప్పింది. దాంతో చెట్లు ఎక్కడం వచ్చన్న సంగతి కూడా మర్చిపోయి, నక్క చెప్పినట్లు చేశావు. ఇలా తప్పుడు సలహాలు ఇస్తూ అందరినీ ఇబ్బంది పెట్టడమే ఆ నక్క పని. అలాంటి వారి వల్ల మనం ఇబ్బందులు పడకుండా ఉండాలంటే మన పని మీద మనకు ఏకాగ్రత ఉండాలి. అప్పుడే ఎవరు ఎన్ని చెప్పినా మన పనిని ఎలాంటి ఆటంకాలు లేకుండా పూర్తి చేయగలం' అంది. 'అవును నువ్వు చెప్పింది నిజమే!' అంది కోతి.`;
+    const STORIES = [
+      {
+        title: "నక్క – కోతి కథ",
+        collection: "సుందరవనం కథలు",
+        text: `సుందరవనంలో ఓ నక్క ఉండేది. దానికి స్వార్థం చాలా ఎక్కువ. అడవిలో ఉండే జంతువులకు ఎప్పుడూ తప్పుడు సలహాలు ఇస్తుండేది. దాని గురించి తెలియని చాలా జంతువులు మోసపోయేవి. ఒకసారి అది అడవిలో తిరుగుతూ, విశ్రాంతి తీసుకుందామని ఓ మామిడి చెట్టు కింద కూర్చుంది. అప్పుడే అక్కడికి ఆకలితో ఉన్న ఓ కోతి వచ్చింది. ఆ చెట్టు చిటారు కొమ్మన రెండే పండ్లు ఉన్నాయి. 'హమ్మయ్యా! వెతుక్కుంటూ ఇంత దూరం వచ్చినందుకు ఆహారం దొరికింది. ఆ పండ్లు కోసుకుని తినేస్తా!' అనుకుంది. మెల్లగా చెట్టు ఎక్కబోతోంది. అప్పుడు నక్క.. 'ఎందుకు అంత శ్రమపడతావు. అదుగో అక్కడున్న కర్ర తీసుకుని కొడితే ఆ పండ్లు కింద పడతాయి. ఎంచక్కా తినేయొచ్చు' అంది. 'భలే సలహా ఇచ్చావు..' అంటూ కర్ర తీసుకుని కొట్టింది కోతి. దాంతో ఆ రెండు మామిడి పండ్లు పక్కనే ఉన్న కొలనులో పడ్డాయి.
+
+చేతిదాకా వచ్చిన ఆహారం నోటికి అందకపోవడంతో కోతి చాలా బాధపడింది. అది చూసి వెంటనే అక్కడి నుంచి వెళ్లిపోయింది నక్క. 'ఇప్పుడు మళ్లీ ఆహారం వెతుక్కోవాలి!' అనుకుంటూ కోతి దిగాలుగా కూర్చుంది. అదంతా గమనిస్తున్న చిలుక.. 'మిత్రమా! చెట్లు ఎక్కడం నీకు వెన్నతో పెట్టిన విద్య. అయినా ఆ నక్క మాటలు విని నువ్వు మోసపోయావు. అదేదో కర్రతో కొట్టమని చెప్పింది. దాంతో చెట్లు ఎక్కడం వచ్చన్న సంగతి కూడా మర్చిపోయి, నక్క చెప్పినట్లు చేశావు. ఇలా తప్పుడు సలహాలు ఇస్తూ అందరినీ ఇబ్బంది పెట్టడమే ఆ నక్క పని. అలాంటి వారి వల్ల మనం ఇబ్బందులు పడకుండా ఉండాలంటే మన పని మీద మనకు ఏకాగ్రత ఉండాలి. అప్పుడే ఎవరు ఎన్ని చెప్పినా మన పనిని ఎలాంటి ఆటంకాలు లేకుండా పూర్తి చేయగలం' అంది. 'అవును నువ్వు చెప్పింది నిజమే!' అంది కోతి.`
+      },
+      {
+        title: "పంది చెప్పిన నిజం",
+        collection: "తెలుగు నీతి కథలు",
+        text: `ఒక రోజు ఒక గొర్రెలోడికి అనుకోకుండా ఒక పంది దొరికింది.
+
+గొర్రెలోడు వెంటనే ఆ పందిని పట్టడానికి ప్రయత్నం మొదలెట్టాడు. పందికి చాలా భయమేసింది. అది కేకలు పెడుతూ అటూ ఇటూ పరిగెత్తింది. నానా గోల పెట్టింది.
+
+ఎలాగో కష్ట పడి గొర్రెలోడు దాన్ని పట్టుకుని భుజం మీద వేసుకుని వేళ్ళ సాగాడు. అప్పు డైనా పంది గోల పెట్టడం ఆపిందా? లేదు. దాన్ని మానాన్ని అది వదలకుండా మహా గోల పెడుతూనే వుంది. భుజం మీద ఊరికే ఉండకుండా మెలికలు తిరుగుతూ కిందకి దుంకి పారిపోవాలని ప్రయత్నం చేస్తూనే ఉంది.
+
+అలా గోల గోల పెడుతున్న పందిని చూసి గొర్రెలోడి వెనకున్న గొర్రెలన్నీ నవ్వడం మొదలెట్టాయి. వాటిల్లో ఒక గొర్రె పందితో ఇలా అంది: "ఎందుకు అంత గోల పెడుతున్నావు? యెంత సిల్లీ గా కనిపిస్తున్నావో తెలుసా? ఈ గొర్రెలోడు మమ్మల్ని కూడా ఇలా పట్టుకుని నడుస్తాడు. కానీ మేము ఎప్పుడు ఇలా గోల గోల పెట్టము. మర్యాదగా చెప్పిన మాట వింటాము"
+
+వెనకున్న గొర్రెలన్నీ ఏదో ఎప్పుడు భయమంటే ఏంటో తెలీనట్టు మొహాలు పెట్టి తల ఊపుతున్నాయి.
+
+దానికి పంది ఇలా జవాబు చెప్పింది. "మిమ్మల్ని గొర్రె లోడు జాగ్రత్త గా చూసుకుంటాడు. మీకు స్నానం చేయించి, మేతకు తీసుకువెళ్లి, మిగతా జంతువుల నుంచి కాపాడి కంటికి రెప్పలా చూసుకుంటాడు. అందుకే మీకు అతనంటే భయం లేదు. కానీ నన్నేమి చేస్తాడో తెలీదు కదా? నన్ను వొండుకు తింటాడో, ఊళ్ళో అమ్మేస్తాడో ఏమిటో? నా భయం నాకు ఉంటుంది కదా!" నిజమే. ఏ అపాయం లేనప్పుడు ధైర్యంగా, సాహస మంతుల లా ఉండడం చాలా సులువు. ఆపద వచ్చినప్పుడు భయమంటే ఏంటో తెలుస్తుంది. అందుకే భయపడుతున్న వాళ్లని చూసి నవ్వకూడదు. వాళ్ళ కష్టం అర్ధం చేసుకోవాలి.`
+      },
+      {
+        title: "రాముడి గర్వం",
+        collection: "తెలుగు నీతి కథలు",
+        text: `ఒక ఊరి లో ప్రతి సంవత్సరం దేవుడిని ఊరేగింపు తీసుకెళ్లే సాంప్రదాయం ఉండేది. ప్రతి సంవత్సరం ఊళ్ళో వారంతా పండగ చేసుకుని, పూజలు చేసి, ఊరేగింపు కోసం అన్ని వీధులు శుభ్రం చేసి, మూగ్గులతో, తోరణాలతో, పువ్వులతో, చాలా అందంగా అలంకరించేవారు.
+
+ఊరేగింపుకు ఒక ఎద్దు బండి కట్టేవారు. ఆ బండిని కడిగి, పసుపు రాసి, బొట్లు పెట్టి, పూలు కట్టి దాన్ని కూడా అందంగా అలంకరించేవారు.
+
+మరి ఆ బండిని తోలే ఎద్దు సంగతి చెప్పాలా? ఊళ్ళో అన్నిటికన్నా ఆరోగ్య వంతంగా, బలంగా ఉన్న ఎద్దును ఎంచుకునేవారు. ఆ ఎద్దు చర్మం నిగనిగలాడేలా దానికి స్నానం చేయించి, బొట్లు పెట్టి, గంటలు కట్టి పట్టు వస్త్రాలు వేసేవారు. ఆహ! చాలా చూడ ముచ్చటగా తయారు చేసేవారు.
+
+ప్రతి సంవత్సరంలా ఈ సంవత్సరం కూడా ఊరేగింపుకు ఊరు తయారయ్యింది. రాముడు అనే ఓక ఎద్దును ఎంచుకున్నారు. బాగా తయారు చేసి, బండి కట్టారు. గుడి ముందర నుంచోపెట్టి, దేవుడి విగ్రహాన్ని బండిలో పెట్టి, హారతి ఇచ్చి ఊరేగింపు మొదలెట్టారు.
+
+ఆ రోజంతా రాముడు ఎక్కడికెళ్తే అక్కడ మనుషులు వంగి, నమస్కారాలు పెట్టారు. వెర్రి రాముడు ఇదంతా తనకి చేస్తున్న సత్కారం అనుకుని భ్రమ పడ్డాడు. రోజంతా చాలా గర్వంగా, పొగరుగా, కొమ్ములు పైకి పెట్టి, ఛాతీ బయిటికి పెట్టి నడిచాడు. తనలో తానె మురిసిపోయి, పొంగిపోయాడనుకోండి!
+
+ఇక సాయంత్రంతో మళ్ళి ఊరేగింపు గుడికి చేరింది. ఎదురు సన్నాహంతో, బాజా బజంత్రీలతో, గ్రామ ప్రజలు తమ దేవుడి విగ్రహాన్ని బండిలోంచి దింపి లోపలి తీలుకుని వెళ్లారు.
+
+విగ్రహం బండిలోంచి దిగంగానే ఇంకేముంది? అందరు రాముడిని మర్చిపోయారు. ఎవరి పనుల్లో వాళ్ళు పడిపోయారు. రాముడిపాయి వేసిన పట్టు వస్త్రాలు తీసేసి మళ్ళీ రాముడిని ఎడ్ల పాక లో తీసుకుని వెళ్లి అక్కడ వదిలేశారు. ఎవ్వరు దండాలు పెట్టలేదు.
+
+అప్పుడు రాముడికి అర్ధమయ్యింది. మనుషులు గౌరవం ఇచ్చేది మనకి కాదు, మనం చేసే పనులకని.`
+      },
+    ];
+
+    // ── Daily Story Selection ────────────────────────────────────────────────
+
+    function getDailyStoryIndex() {
+      const now = new Date();
+      const start = new Date(now.getFullYear(), 0, 0);
+      const dayOfYear = Math.floor((now - start) / 86400000);
+      return dayOfYear % STORIES.length;
+    }
 
     // ── Transliteration ──────────────────────────────────────────────────────
 
@@ -136,20 +395,19 @@
       'ళ': 'ḷ',   'ఱ': 'rr'
     };
 
-    // Consonant classes for anusvara (ం) nasal assimilation
-    const VELAR_SET    = new Set(['\u0C15','\u0C16','\u0C17','\u0C18','\u0C19']); // క ఖ గ ఘ ఙ
-    const PALATAL_SET  = new Set(['\u0C1A','\u0C1B','\u0C1C','\u0C1D','\u0C1E']); // చ ఛ జ ఝ ఞ
-    const RETROFLEX_SET= new Set(['\u0C1F','\u0C20','\u0C21','\u0C22','\u0C23','\u0C33','\u0C31']); // ట ఠ డ ఢ ణ ళ ఱ
-    const LABIAL_SET   = new Set(['\u0C2A','\u0C2B','\u0C2C','\u0C2D','\u0C2E']); // ప ఫ బ భ మ
+    const VELAR_SET     = new Set(['\u0C15','\u0C16','\u0C17','\u0C18','\u0C19']);
+    const PALATAL_SET   = new Set(['\u0C1A','\u0C1B','\u0C1C','\u0C1D','\u0C1E']);
+    const RETROFLEX_SET = new Set(['\u0C1F','\u0C20','\u0C21','\u0C22','\u0C23','\u0C33','\u0C31']);
+    const LABIAL_SET    = new Set(['\u0C2A','\u0C2B','\u0C2C','\u0C2D','\u0C2E']);
 
     const DIGITS = {
       '౦': '0', '౧': '1', '౨': '2', '౩': '3', '౪': '4',
       '౫': '5', '౬': '6', '౭': '7', '౮': '8', '౯': '9'
     };
 
-    const VIRAMA   = '\u0C4D'; // ్
-    const ANUSVARA = '\u0C02'; // ం
-    const VISARGA  = '\u0C03'; // ః
+    const VIRAMA   = '\u0C4D';
+    const ANUSVARA = '\u0C02';
+    const VISARGA  = '\u0C03';
 
     function transliterate(text) {
       let result = '';
@@ -159,7 +417,6 @@
       while (i < n) {
         const ch = text[i];
 
-        // Compound consonant: క్ష → kṣa
         if (ch === 'క' && text[i + 1] === VIRAMA && text[i + 2] === 'ష') {
           i += 3;
           if (MATRAS[text[i]] !== undefined) {
@@ -175,26 +432,24 @@
         if (CONSONANTS[ch] !== undefined) {
           const base = CONSONANTS[ch];
           i++;
-          // Look ahead for matra or virama
           if (MATRAS[text[i]] !== undefined) {
             result += base + MATRAS[text[i++]];
           } else if (text[i] === VIRAMA) {
-            result += base; i++; // suppress inherent 'a'
+            result += base; i++;
           } else {
-            result += base + 'a'; // inherent vowel
+            result += base + 'a';
           }
         } else if (INDEPENDENT_VOWELS[ch] !== undefined) {
           result += INDEPENDENT_VOWELS[ch];
           i++;
         } else if (ch === ANUSVARA) {
-          // Nasal assimilates to the place of articulation of the following consonant
           const next = text[i + 1];
           if      (next && RETROFLEX_SET.has(next)) result += 'ṇ';
           else if (next && PALATAL_SET.has(next))   result += 'ñ';
           else if (next && VELAR_SET.has(next))     result += 'ṅ';
           else if (next && LABIAL_SET.has(next))    result += 'm';
           else if (next && CONSONANTS[next] !== undefined) result += 'n';
-          else                                      result += 'ṁ'; // word-final
+          else                                      result += 'ṁ';
           i++;
         } else if (ch === VISARGA) {
           result += 'ḥ';
@@ -203,7 +458,7 @@
           result += DIGITS[ch];
           i++;
         } else {
-          result += ch; // punctuation, spaces, unrecognized
+          result += ch;
           i++;
         }
       }
@@ -213,12 +468,19 @@
 
     // ── Rendering ────────────────────────────────────────────────────────────
 
+    let allRevealed = false;
+    let currentIndex = getDailyStoryIndex();
+    const dailyIndex = currentIndex;
+
     function togglePhonetic(span) {
-      span.querySelector('.phonetic').classList.toggle('hidden');
+      const ph = span.querySelector('.phonetic');
+      ph.classList.toggle('hidden');
+      span.classList.toggle('active', !ph.classList.contains('hidden'));
     }
 
     function renderParagraph(text, container) {
       const tokens = text.match(/[\u0C00-\u0C7F]+|[^\u0C00-\u0C7F]+/g) || [];
+
       for (const token of tokens) {
         if (/[\u0C00-\u0C7F]/.test(token)) {
           const span = document.createElement('span');
@@ -228,7 +490,6 @@
           const label = document.createElement('span');
           label.className = 'phonetic hidden';
           label.textContent = transliterate(token);
-
           span.appendChild(label);
           span.appendChild(document.createTextNode(token));
           container.appendChild(span);
@@ -238,16 +499,62 @@
       }
     }
 
-    function renderStory(text) {
+    function loadStory(index) {
+      const story = STORIES[index];
+      currentIndex = index;
+      allRevealed = false;
+
+      // Update headings
+      document.getElementById('storyTitle').textContent = story.title;
+      document.getElementById('storyCollection').textContent = story.collection;
+      document.getElementById('dailyBadge').classList.toggle('hidden', index !== dailyIndex);
+
+      // Clear and re-render story
       const storyEl = document.getElementById('story');
-      for (const para of text.split('\n\n')) {
+      storyEl.innerHTML = '';
+
+      let wordCount = 0;
+      for (const para of story.text.split('\n\n')) {
         const p = document.createElement('p');
         renderParagraph(para, p);
         storyEl.appendChild(p);
+        const teluguWords = para.match(/[\u0C00-\u0C7F]+/g);
+        if (teluguWords) wordCount += teluguWords.length;
       }
+
+      // Update bottom bar
+      document.getElementById('wordCount').textContent = wordCount + ' పదాలు';
+      document.getElementById('storyCounter').textContent = (index + 1) + ' / ' + STORIES.length;
+      document.getElementById('prevBtn').disabled = index === 0;
+      document.getElementById('nextBtn').disabled = index === STORIES.length - 1;
+
+      // Scroll to top of page
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
-    renderStory(STORY);
+    // ── Event Listeners ──────────────────────────────────────────────────────
+
+    document.getElementById('toggleAllBtn').addEventListener('click', () => {
+      allRevealed = !allRevealed;
+      document.querySelectorAll('.phonetic').forEach(ph => {
+        ph.classList.toggle('hidden', !allRevealed);
+      });
+      document.querySelectorAll('.word').forEach(w => {
+        w.classList.toggle('active', allRevealed);
+      });
+    });
+
+    document.getElementById('prevBtn').addEventListener('click', () => {
+      if (currentIndex > 0) loadStory(currentIndex - 1);
+    });
+
+    document.getElementById('nextBtn').addEventListener('click', () => {
+      if (currentIndex < STORIES.length - 1) loadStory(currentIndex + 1);
+    });
+
+    // ── Init ─────────────────────────────────────────────────────────────────
+
+    loadStory(currentIndex);
   </script>
 </body>
 </html>
