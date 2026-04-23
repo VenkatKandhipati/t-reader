@@ -830,6 +830,23 @@
     function recordClick(wordText) {
       totalClicks++;
       clickedWords.set(wordText, (clickedWords.get(wordText) || 0) + 1);
+      try {
+        const cards = JSON.parse(localStorage.getItem('vocabCards') || '{}');
+        if (!cards[wordText]) {
+          const today = new Date().toISOString().slice(0, 10);
+          cards[wordText] = {
+            telugu: wordText,
+            trans: transliterate(wordText),
+            storyIdx: currentIndex,
+            interval: 1,
+            easeFactor: 2.5,
+            nextReview: today,
+            repetitions: 0,
+            added: today
+          };
+          localStorage.setItem('vocabCards', JSON.stringify(cards));
+        }
+      } catch {}
       updateStatsUI();
     }
 

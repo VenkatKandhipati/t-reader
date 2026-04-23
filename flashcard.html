@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="te">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Flash Cards — Telugu Practice</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Telugu:wght@400;500;700&family=Noto+Serif+Telugu:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #e8e4dd;
+      --page-bg: #f5f0e6;
+      --navbar-bg: #d6d2cb;
+      --navbar-border: #c4bfb6;
+      --text-primary: #2c2c2c;
+      --text-secondary: #555;
+      --text-tertiary: #666;
+      --text-muted: #888;
+      --text-faint: #999;
+      --text-heading: #3a2a10;
+      --text-subheading: #6b5a3e;
+      --text-hint: #b0a48a;
+      --accent: #b5531a;
+      --accent-gold: #c8a96e;
+      --accent-green: #6b8f3a;
+      --phonetic-color: #8a6000;
+      --stats-border: #e2d9c8;
+      --btn-border: #b5b0a6;
+      --btn-hover-bg: rgba(0, 0, 0, 0.05);
+    }
+
+    [data-theme="dark"] {
+      --bg: #1a1a1a;
+      --page-bg: #252525;
+      --navbar-bg: #2a2a2a;
+      --navbar-border: #3a3a3a;
+      --text-primary: #e0ddd6;
+      --text-secondary: #b0ada6;
+      --text-tertiary: #999;
+      --text-muted: #777;
+      --text-faint: #666;
+      --text-heading: #e8dcc8;
+      --text-subheading: #c4a878;
+      --text-hint: #706858;
+      --accent: #d4743a;
+      --accent-gold: #d4b478;
+      --accent-green: #8ab450;
+      --phonetic-color: #d4a830;
+      --stats-border: #3a3530;
+      --btn-border: #555;
+      --btn-hover-bg: rgba(255, 255, 255, 0.06);
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text-primary);
+      min-height: 100vh;
+      font-family: 'Noto Sans Telugu', sans-serif;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── Navbar ────────────────────────────────────────────────────── */
+
+    .navbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--navbar-bg);
+      border-bottom: 1px solid var(--navbar-border);
+      padding: 0.6rem 1.2rem;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .nav-left {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      text-decoration: none;
+    }
+
+    .nav-left:hover { color: var(--text-primary); }
+    .nav-left svg { width: 18px; height: 18px; }
+
+    .nav-title {
+      font-size: 0.95rem;
+      font-weight: 500;
+      color: var(--text-secondary);
+    }
+
+    .theme-toggle {
+      background: none;
+      border: 1px solid var(--btn-border);
+      border-radius: 4px;
+      cursor: pointer;
+      color: var(--text-tertiary);
+      padding: 0.2rem 0.4rem;
+      display: flex;
+      align-items: center;
+      transition: color 0.15s, background 0.15s;
+    }
+
+    .theme-toggle:hover { color: var(--text-primary); background: var(--btn-hover-bg); }
+    .theme-toggle svg { width: 18px; height: 18px; }
+
+    /* ── Main ──────────────────────────────────────────────────────── */
+
+    .main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem 1rem;
+    }
+
+    /* ── Session bar ───────────────────────────────────────────────── */
+
+    .session-bar {
+      display: flex;
+      gap: 2rem;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      font-family: Georgia, serif;
+      margin-bottom: 1.5rem;
+    }
+
+    .session-bar b { color: var(--text-heading); }
+
+    /* ── Card ──────────────────────────────────────────────────────── */
+
+    .card-scene {
+      perspective: 900px;
+      width: 380px;
+      height: 250px;
+      cursor: pointer;
+      margin-bottom: 1.5rem;
+    }
+
+    .card {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      transform-style: preserve-3d;
+      transition: transform 0.45s ease;
+    }
+
+    .card.flipped { transform: rotateY(180deg); }
+
+    .card-face {
+      position: absolute;
+      inset: 0;
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+      border-radius: 12px;
+      background: var(--page-bg);
+      border: 1px solid var(--stats-border);
+      box-shadow: 0 2px 16px rgba(0,0,0,0.08), 0 0 0 1px rgba(0,0,0,0.03);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2.5rem 2rem;
+      gap: 0.4rem;
+    }
+
+    .card-face.back { transform: rotateY(180deg); }
+
+    .card-telugu {
+      font-family: 'Noto Serif Telugu', serif;
+      font-size: 2.6rem;
+      font-weight: 700;
+      color: var(--text-heading);
+      text-align: center;
+      line-height: 1.3;
+    }
+
+    .card-trans {
+      font-family: Georgia, serif;
+      font-size: 1.15rem;
+      color: var(--phonetic-color);
+      text-align: center;
+      margin-top: 0.3rem;
+    }
+
+    .card-source {
+      font-family: Georgia, serif;
+      font-size: 0.7rem;
+      color: var(--text-hint);
+      font-style: italic;
+      margin-top: 0.6rem;
+    }
+
+    .card-hint {
+      font-size: 0.72rem;
+      color: var(--text-hint);
+      font-style: italic;
+      font-family: Georgia, serif;
+      margin-top: 0.6rem;
+    }
+
+    /* ── Flip button ───────────────────────────────────────────────── */
+
+    .flip-btn {
+      background: none;
+      border: 1px solid var(--btn-border);
+      border-radius: 6px;
+      padding: 0.5rem 2.5rem;
+      font-family: 'Noto Sans Telugu', sans-serif;
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: background 0.15s, color 0.15s;
+      margin-bottom: 1.5rem;
+    }
+
+    .flip-btn:hover { background: var(--btn-hover-bg); color: var(--text-primary); }
+
+    /* ── Rating buttons ────────────────────────────────────────────── */
+
+    .rating-area {
+      display: flex;
+      gap: 0.75rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .rate-btn {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.25rem;
+      padding: 0.55rem 1.2rem;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+      font-family: 'Noto Sans Telugu', sans-serif;
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: #fff;
+      transition: opacity 0.15s, transform 0.1s;
+      min-width: 68px;
+    }
+
+    .rate-btn:hover { opacity: 0.88; transform: translateY(-1px); }
+    .rate-btn:active { transform: translateY(0); }
+
+    .rate-interval {
+      font-size: 0.62rem;
+      font-family: Georgia, serif;
+      font-weight: 400;
+      opacity: 0.8;
+    }
+
+    .rate-btn.again { background: #b5451a; }
+    .rate-btn.hard  { background: #9a8428; }
+    .rate-btn.good  { background: #3a6a9e; }
+    .rate-btn.easy  { background: #4e7f30; }
+
+    /* ── Empty / Done states ───────────────────────────────────────── */
+
+    .state-box {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1rem;
+      text-align: center;
+      padding: 3rem 2rem;
+    }
+
+    .state-box h2 {
+      font-family: 'Noto Serif Telugu', serif;
+      font-size: 1.4rem;
+      color: var(--text-heading);
+    }
+
+    .state-box p {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      font-family: Georgia, serif;
+      max-width: 300px;
+      line-height: 1.6;
+    }
+
+    .state-link {
+      display: inline-block;
+      padding: 0.5rem 1.5rem;
+      border: 1px solid var(--btn-border);
+      border-radius: 6px;
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      text-decoration: none;
+      transition: background 0.15s, color 0.15s;
+    }
+
+    .state-link:hover { background: var(--btn-hover-bg); color: var(--text-primary); }
+
+    /* ── Responsive ────────────────────────────────────────────────── */
+
+    @media (max-width: 440px) {
+      .card-scene { width: 100%; height: 210px; }
+      .card-telugu { font-size: 2rem; }
+      .rate-btn { padding: 0.5rem 0.75rem; min-width: 56px; }
+      .rating-area { gap: 0.5rem; }
+    }
+  </style>
+  <script>(function(){ var t=localStorage.getItem('theme'); if(t) document.documentElement.dataset.theme=t; })();</script>
+</head>
+<body>
+
+  <nav class="navbar">
+    <a class="nav-left" href="library.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+      <span>పుస్తకాలు</span>
+    </a>
+    <div class="nav-title">Flash Cards</div>
+    <button class="theme-toggle" id="themeToggleBtn" title="Toggle dark mode">
+      <svg id="themeIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+      </svg>
+    </button>
+  </nav>
+
+  <div class="main">
+
+    <!-- No vocab yet -->
+    <div class="state-box" id="emptyState" hidden>
+      <h2>No cards yet</h2>
+      <p>Click words while reading stories to add them to your flashcard deck.</p>
+      <a class="state-link" href="library.html">Start reading</a>
+    </div>
+
+    <!-- Session complete or nothing due -->
+    <div class="state-box" id="doneState" hidden>
+      <h2>All caught up</h2>
+      <p id="doneStats"></p>
+      <a class="state-link" href="library.html">Back to library</a>
+    </div>
+
+    <!-- Active review session -->
+    <div id="reviewUi" hidden>
+      <div style="display:flex;flex-direction:column;align-items:center;">
+
+        <div class="session-bar">
+          <span>Remaining: <b id="remainingCount">0</b></span>
+          <span>Done: <b id="doneCount">0</b></span>
+        </div>
+
+        <div class="card-scene" id="cardScene">
+          <div class="card" id="card">
+            <div class="card-face front">
+              <div class="card-telugu" id="cardFrontTelugu"></div>
+              <div class="card-hint">tap to reveal</div>
+            </div>
+            <div class="card-face back">
+              <div class="card-telugu" id="cardBackTelugu"></div>
+              <div class="card-trans" id="cardTrans"></div>
+              <div class="card-source" id="cardSource"></div>
+            </div>
+          </div>
+        </div>
+
+        <div id="flipArea">
+          <button class="flip-btn" id="flipBtn">Reveal</button>
+        </div>
+
+        <div class="rating-area" id="ratingArea" hidden>
+          <button class="rate-btn again" data-q="0">
+            Again
+            <span class="rate-interval" id="intervalAgain"></span>
+          </button>
+          <button class="rate-btn hard" data-q="3">
+            Hard
+            <span class="rate-interval" id="intervalHard"></span>
+          </button>
+          <button class="rate-btn good" data-q="4">
+            Good
+            <span class="rate-interval" id="intervalGood"></span>
+          </button>
+          <button class="rate-btn easy" data-q="5">
+            Easy
+            <span class="rate-interval" id="intervalEasy"></span>
+          </button>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <script src="stories.js"></script>
+  <script>
+    // ── Theme ──────────────────────────────────────────────────────────────────
+
+    function updateThemeIcon(theme) {
+      const icon = document.getElementById('themeIcon');
+      if (theme === 'dark') {
+        icon.innerHTML = '<circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>';
+      } else {
+        icon.innerHTML = '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>';
+      }
+    }
+
+    document.getElementById('themeToggleBtn').addEventListener('click', () => {
+      const current = document.documentElement.dataset.theme || 'light';
+      const next = current === 'dark' ? 'light' : 'dark';
+      document.documentElement.dataset.theme = next;
+      localStorage.setItem('theme', next);
+      updateThemeIcon(next);
+    });
+
+    updateThemeIcon(document.documentElement.dataset.theme || 'light');
+
+    // ── Storage ────────────────────────────────────────────────────────────────
+
+    function getCards() {
+      try { return JSON.parse(localStorage.getItem('vocabCards') || '{}'); } catch { return {}; }
+    }
+
+    function saveCard(card) {
+      try {
+        const cards = getCards();
+        cards[card.telugu] = card;
+        localStorage.setItem('vocabCards', JSON.stringify(cards));
+      } catch {}
+    }
+
+    // ── SM-2 ───────────────────────────────────────────────────────────────────
+
+    function sm2(card, quality) {
+      let { interval, easeFactor, repetitions } = card;
+      if (quality < 3) {
+        repetitions = 0;
+        interval = 1;
+      } else {
+        if (repetitions === 0) interval = 1;
+        else if (repetitions === 1) interval = 6;
+        else interval = Math.round(interval * easeFactor);
+        easeFactor = Math.max(1.3, easeFactor + 0.1 - (5 - quality) * (0.08 + (5 - quality) * 0.02));
+        repetitions++;
+      }
+      const next = new Date();
+      next.setDate(next.getDate() + interval);
+      return { ...card, interval, easeFactor, repetitions, nextReview: next.toISOString().slice(0, 10) };
+    }
+
+    function intervalLabel(card, quality) {
+      if (quality === 0) return 'again';
+      const days = sm2(card, quality).interval;
+      return days === 1 ? '1d' : days + 'd';
+    }
+
+    // ── Session ────────────────────────────────────────────────────────────────
+
+    const today = new Date().toISOString().slice(0, 10);
+
+    function buildSession() {
+      const all = Object.values(getCards());
+      const due = all
+        .filter(c => c.repetitions > 0 && c.nextReview <= today)
+        .sort((a, b) => a.nextReview.localeCompare(b.nextReview));
+      const newCards = all
+        .filter(c => c.repetitions === 0)
+        .slice(0, 20);
+      return [...due, ...newCards];
+    }
+
+    let session = buildSession();
+    let sessionIdx = 0;
+    let sessionDone = 0;
+    const requeued = new Set();
+    let isFlipped = false;
+
+    function showView(id) {
+      ['emptyState', 'doneState', 'reviewUi'].forEach(s => {
+        document.getElementById(s).hidden = s !== id;
+      });
+    }
+
+    function renderCard(card) {
+      isFlipped = false;
+      document.getElementById('card').classList.remove('flipped');
+      document.getElementById('cardFrontTelugu').textContent = card.telugu;
+      document.getElementById('cardBackTelugu').textContent = card.telugu;
+      document.getElementById('cardTrans').textContent = card.trans;
+
+      const story = STORIES[card.storyIdx];
+      document.getElementById('cardSource').textContent = story ? 'from: ' + story.titleEn : '';
+
+      document.getElementById('intervalAgain').textContent = intervalLabel(card, 0);
+      document.getElementById('intervalHard').textContent  = intervalLabel(card, 3);
+      document.getElementById('intervalGood').textContent  = intervalLabel(card, 4);
+      document.getElementById('intervalEasy').textContent  = intervalLabel(card, 5);
+
+      document.getElementById('flipArea').hidden = false;
+      document.getElementById('ratingArea').hidden = true;
+
+      document.getElementById('remainingCount').textContent = session.length - sessionIdx;
+      document.getElementById('doneCount').textContent = sessionDone;
+    }
+
+    function flip() {
+      if (isFlipped) return;
+      isFlipped = true;
+      document.getElementById('card').classList.add('flipped');
+      document.getElementById('flipArea').hidden = true;
+      document.getElementById('ratingArea').hidden = false;
+    }
+
+    function rate(quality) {
+      const card = session[sessionIdx];
+      const updated = sm2(card, quality);
+      saveCard(updated);
+
+      if (quality === 0 && !requeued.has(card.telugu)) {
+        requeued.add(card.telugu);
+        session.push({ ...updated });
+      }
+
+      sessionDone++;
+      sessionIdx++;
+      advance();
+    }
+
+    function advance() {
+      if (sessionIdx >= session.length) {
+        const total = Object.keys(getCards()).length;
+        document.getElementById('doneStats').textContent =
+          sessionDone + ' card' + (sessionDone === 1 ? '' : 's') + ' reviewed · ' + total + ' in deck';
+        showView('doneState');
+        return;
+      }
+      renderCard(session[sessionIdx]);
+    }
+
+    // ── Init ───────────────────────────────────────────────────────────────────
+
+    const allCards = getCards();
+
+    if (Object.keys(allCards).length === 0) {
+      showView('emptyState');
+    } else if (session.length === 0) {
+      const total = Object.keys(allCards).length;
+      document.getElementById('doneStats').textContent =
+        'Nothing due today · ' + total + ' card' + (total === 1 ? '' : 's') + ' in deck';
+      showView('doneState');
+    } else {
+      showView('reviewUi');
+      renderCard(session[0]);
+    }
+
+    // ── Events ─────────────────────────────────────────────────────────────────
+
+    document.getElementById('flipBtn').addEventListener('click', flip);
+    document.getElementById('cardScene').addEventListener('click', flip);
+
+    document.getElementById('ratingArea').addEventListener('click', e => {
+      const btn = e.target.closest('[data-q]');
+      if (btn) rate(parseInt(btn.dataset.q, 10));
+    });
+  </script>
+</body>
+</html>

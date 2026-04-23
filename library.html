@@ -311,12 +311,44 @@
       flex-shrink: 0;
     }
 
-    /* ── Header Actions (theme toggle) ──────────────── */
+    /* ── Header Actions (theme toggle + review) ─────── */
 
     .header-actions {
       position: absolute;
       top: 1rem;
       right: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .review-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.25rem 0.65rem;
+      border: 1px solid var(--btn-border);
+      border-radius: 4px;
+      font-family: 'Noto Sans Telugu', sans-serif;
+      font-size: 0.78rem;
+      color: var(--text-tertiary);
+      text-decoration: none;
+      transition: color 0.15s, background 0.15s;
+    }
+
+    .review-link:hover {
+      color: var(--text-primary);
+      background: var(--btn-hover-bg);
+    }
+
+    .review-due-badge {
+      background: var(--accent);
+      color: #fff;
+      font-size: 0.62rem;
+      font-family: Georgia, serif;
+      padding: 1px 5px;
+      border-radius: 6px;
+      line-height: 1.5;
     }
 
     .theme-toggle {
@@ -427,6 +459,10 @@
 
   <div class="header">
     <div class="header-actions">
+      <a href="flashcard.html" class="review-link" id="reviewLink">
+        Review
+        <span class="review-due-badge" id="reviewDueBadge" style="display:none;"></span>
+      </a>
       <button class="theme-toggle" id="themeToggleBtn" title="Toggle dark mode">
         <svg id="themeIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
@@ -613,6 +649,21 @@
     }
 
     buildShelf();
+
+    // ── Review Badge ──────────────────────────────────────────────────────────
+
+    (function () {
+      try {
+        const cards = JSON.parse(localStorage.getItem('vocabCards') || '{}');
+        const today = new Date().toISOString().slice(0, 10);
+        const due = Object.values(cards).filter(c => c.nextReview <= today).length;
+        if (due > 0) {
+          const badge = document.getElementById('reviewDueBadge');
+          badge.textContent = due;
+          badge.style.display = '';
+        }
+      } catch {}
+    })();
   </script>
 </body>
 </html>
