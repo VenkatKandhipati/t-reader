@@ -522,6 +522,39 @@
       border-top: 1px solid var(--stats-border);
     }
 
+    /* ── Flashcard Nav Link ──────────────────────────────────── */
+
+    .nav-flashcard {
+      position: relative;
+      display: flex;
+      align-items: center;
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--text-tertiary);
+      padding: 0.3rem;
+      border-radius: 4px;
+      text-decoration: none;
+      transition: color 0.15s;
+    }
+
+    .nav-flashcard:hover { color: var(--text-primary); }
+    .nav-flashcard svg { width: 20px; height: 20px; }
+
+    .nav-flashcard-badge {
+      position: absolute;
+      top: -3px;
+      right: -5px;
+      background: var(--accent);
+      color: #fff;
+      font-size: 0.55rem;
+      font-family: Georgia, serif;
+      padding: 1px 4px;
+      border-radius: 6px;
+      line-height: 1.5;
+      pointer-events: none;
+    }
+
     /* ── Theme Toggle ────────────────────────────────────────── */
 
     .theme-toggle {
@@ -564,21 +597,33 @@
 
     @media (max-width: 640px) {
       .page {
-        padding: 2rem 1.5rem;
+        padding: 1.5rem 1rem;
         border-radius: 0;
       }
 
-      .page-wrapper { padding: 1rem 0; }
+      .page-wrapper { padding: 0.5rem 0; }
 
-      .story {
-        font-size: var(--story-font-size);
-        line-height: 2.4;
-      }
+      .story { line-height: 2.2; }
 
       .chapter-heading .part { font-size: 1.3rem; }
       .chapter-heading .chapter { font-size: 1rem; }
 
       .stats-panel { border-radius: 0; }
+
+      /* Larger tap targets for prev/next */
+      .bottom-bar button {
+        padding: 0.55rem 1.2rem;
+        font-size: 0.85rem;
+        min-height: 44px;
+      }
+
+      /* Tighter navbar on small screens */
+      .nav-right { gap: 0.4rem; }
+
+      /* Prevent 300ms tap delay on interactive elements */
+      .word, .bottom-bar button, .nav-btn, .font-size-btn, .theme-toggle {
+        touch-action: manipulation;
+      }
     }
   </style>
   <script>(function(){ var t=localStorage.getItem('theme'); if(t) document.documentElement.dataset.theme=t; })();</script>
@@ -596,6 +641,10 @@
     </a>
     <div class="nav-title">తెలుగు కథలు</div>
     <div class="nav-right">
+      <a class="nav-flashcard" href="flashcard.html" title="Flash cards">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/><line x1="7" y1="15" x2="17" y2="15"/></svg>
+        <span class="nav-flashcard-badge" id="navFlashcardBadge" style="display:none;"></span>
+      </a>
       <button class="theme-toggle" id="themeToggleBtn" title="Toggle dark mode">
         <svg id="themeIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
@@ -1026,7 +1075,7 @@
     const FONT_MIN = 0.9;
     const FONT_MAX = 2.0;
     const FONT_STEP = 0.1;
-    const FONT_DEFAULT = 1.25;
+    const FONT_DEFAULT = window.matchMedia('(max-width: 640px)').matches ? 1.5 : 1.25;
 
     function getStoredFontSize() {
       const stored = parseFloat(localStorage.getItem('storyFontSize'));
@@ -1076,6 +1125,21 @@
 
     loadStory(currentIndex);
     updateProgress();
+
+    // ── Flashcard due count ───────────────────────────────────────────────────
+
+    (function () {
+      try {
+        const cards = JSON.parse(localStorage.getItem('vocabCards') || '{}');
+        const today = new Date().toISOString().slice(0, 10);
+        const due = Object.values(cards).filter(c => c.nextReview <= today).length;
+        if (due > 0) {
+          const badge = document.getElementById('navFlashcardBadge');
+          badge.textContent = due;
+          badge.style.display = '';
+        }
+      } catch {}
+    })();
   </script>
 </body>
 </html>

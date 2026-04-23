@@ -72,16 +72,23 @@
     }
 
     .header h1 {
-      font-family: 'Noto Serif Telugu', serif;
-      font-size: 1.8rem;
+      font-family: Georgia, serif;
+      font-size: 2.2rem;
       font-weight: 700;
       color: var(--text-heading);
-      margin-bottom: 0.3rem;
+      margin-bottom: 0.25rem;
+    }
+
+    .header-telugu {
+      font-family: 'Noto Serif Telugu', serif;
+      font-size: 1rem;
+      color: var(--stats-label);
+      margin-bottom: 0.4rem;
     }
 
     .header p {
       font-family: 'Noto Sans Telugu', sans-serif;
-      font-size: 0.85rem;
+      font-size: 0.95rem;
       color: var(--stats-label);
     }
 
@@ -378,21 +385,16 @@
     .streak-badge {
       display: inline-flex;
       align-items: center;
-      gap: 0.3rem;
-      font-family: 'Noto Sans Telugu', sans-serif;
-      font-size: 0.82rem;
+      gap: 0.35rem;
+      font-family: Georgia, serif;
+      font-size: 0.95rem;
       color: var(--accent);
       margin-top: 0.5rem;
     }
 
-    .streak-badge svg {
-      width: 18px;
-      height: 18px;
-    }
-
     .streak-count {
-      font-family: Georgia, serif;
       font-weight: 700;
+      font-size: 1.05rem;
     }
 
     .streak-label {
@@ -433,10 +435,128 @@
       stroke-linecap: round;
     }
 
+    /* ── Flashcard Deck on Shelf ─────────────────────── */
+
+    .card-deck {
+      position: relative;
+      width: 68px;
+      cursor: pointer;
+      text-decoration: none;
+      color: inherit;
+      z-index: 1;
+      flex-shrink: 0;
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+      margin-left: 10px;
+    }
+
+    .card-deck:hover {
+      transform: translateY(-8px) rotate(2deg);
+      z-index: 2;
+    }
+
+    .card-deck-body {
+      width: 68px;
+      height: 145px;
+      border-radius: 5px 5px 4px 4px;
+      background: linear-gradient(160deg, #3a3028, #26211a);
+      border: 1px solid rgba(200, 169, 110, 0.25);
+      box-shadow:
+        2px 2px 8px rgba(0, 0, 0, 0.35),
+        inset -2px 0 5px rgba(0, 0, 0, 0.2),
+        inset 0 1px 0 rgba(200, 169, 110, 0.1);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0.6rem;
+      padding: 0.8rem 0.4rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Card edge highlight */
+    .card-deck-body::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 3px;
+      background: linear-gradient(180deg, rgba(200,169,110,0.25), rgba(200,169,110,0.05));
+      border-radius: 5px 0 0 4px;
+    }
+
+    .card-deck-icon {
+      color: var(--accent-gold);
+      opacity: 0.85;
+      flex-shrink: 0;
+    }
+
+    .card-deck-label {
+      writing-mode: vertical-rl;
+      text-orientation: mixed;
+      font-family: Georgia, serif;
+      font-size: 0.65rem;
+      font-weight: 600;
+      color: rgba(200, 169, 110, 0.75);
+      letter-spacing: 0.06em;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+    }
+
+    .card-deck-due {
+      position: absolute;
+      top: -6px;
+      right: -6px;
+      background: var(--accent);
+      color: #fff;
+      font-size: 0.62rem;
+      font-family: Georgia, serif;
+      padding: 2px 6px;
+      border-radius: 8px;
+      z-index: 3;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+    }
+
+    .card-deck-tooltip {
+      position: absolute;
+      bottom: calc(100% + 12px);
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--tooltip-bg);
+      color: var(--tooltip-text);
+      padding: 8px 14px;
+      border-radius: 6px;
+      font-family: 'Noto Sans Telugu', sans-serif;
+      font-size: 0.78rem;
+      white-space: nowrap;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s ease;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      z-index: 10;
+    }
+
+    .card-deck-tooltip::after {
+      content: '';
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      border: 6px solid transparent;
+      border-top-color: var(--tooltip-bg);
+    }
+
+    .card-deck:hover .card-deck-tooltip { opacity: 1; }
+
     /* ── Responsive ──────────────────────────────────── */
 
     @media (max-width: 640px) {
-      .header h1 { font-size: 1.4rem; }
+      /* Push header content below the absolutely-positioned actions row */
+      .header { padding-top: 3.5rem; }
+
+      .header h1 { font-size: 1.7rem; }
+      .header-telugu { font-size: 0.88rem; }
+      .header p { font-size: 0.85rem; }
 
       .shelf {
         padding: 1.5rem 1rem 0;
@@ -444,13 +564,13 @@
         min-height: 180px;
       }
 
-      .book-spine {
-        width: 54px;
-      }
-
+      .book-spine { width: 54px; }
       .book { width: 54px; }
 
-      .spine-title { font-size: 0.7rem; }
+      /* Touch-friendly book tap area */
+      .book, .review-link, .theme-toggle {
+        touch-action: manipulation;
+      }
     }
   </style>
   <script>(function(){ var t=localStorage.getItem('theme'); if(t) document.documentElement.dataset.theme=t; })();</script>
@@ -469,10 +589,10 @@
         </svg>
       </button>
     </div>
-    <h1>పుస్తకాలయం</h1>
-    <p>ఒక కథ ఎంచుకోండి &middot; Pick a story to read</p>
+    <h1>Story Library</h1>
+    <div class="header-telugu">పుస్తకాలయం</div>
+    <p>Pick a story to read</p>
     <div class="streak-badge" id="streakBadge" style="display:none;">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2c.5 3.5-1.5 6-1.5 6s2 1.5 2 4c0 2-1.5 3-3 3s-2.5-1-2.5-3c0-1.5.5-2.5.5-2.5S6 11 6 8.5C6 5 9 2 12 2z"/></svg>
       <span class="streak-count" id="streakCount"></span>
       <span class="streak-label">day streak</span>
     </div>
@@ -644,6 +764,46 @@
 
         shelf.appendChild(link);
       });
+
+      // ── Flashcard deck box ──────────────────────────────────────────────────
+
+      const deckLink = document.createElement('a');
+      deckLink.href = 'flashcard.html';
+      deckLink.className = 'card-deck';
+
+      const deckBody = document.createElement('div');
+      deckBody.className = 'card-deck-body';
+
+      const deckIcon = document.createElement('div');
+      deckIcon.className = 'card-deck-icon';
+      deckIcon.innerHTML = '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/><line x1="7" y1="15" x2="17" y2="15"/></svg>';
+
+      const deckLabel = document.createElement('span');
+      deckLabel.className = 'card-deck-label';
+      deckLabel.textContent = 'Flash Cards';
+
+      deckBody.appendChild(deckIcon);
+      deckBody.appendChild(deckLabel);
+      deckLink.appendChild(deckBody);
+
+      try {
+        const vocabCards = JSON.parse(localStorage.getItem('vocabCards') || '{}');
+        const todayStr = new Date().toISOString().slice(0, 10);
+        const dueCount = Object.values(vocabCards).filter(c => c.nextReview <= todayStr).length;
+        if (dueCount > 0) {
+          const dueBadge = document.createElement('div');
+          dueBadge.className = 'card-deck-due';
+          dueBadge.textContent = dueCount;
+          deckLink.appendChild(dueBadge);
+        }
+      } catch {}
+
+      const deckTooltip = document.createElement('div');
+      deckTooltip.className = 'card-deck-tooltip';
+      deckTooltip.textContent = 'Flash Cards';
+      deckLink.appendChild(deckTooltip);
+
+      shelf.appendChild(deckLink);
 
       container.appendChild(shelf);
     }

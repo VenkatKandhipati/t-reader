@@ -10,6 +10,9 @@
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+    /* Prevent CSS display rules from overriding the hidden attribute */
+    [hidden] { display: none !important; }
+
     :root {
       --bg: #e8e4dd;
       --page-bg: #f5f0e6;
@@ -118,10 +121,17 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: 2rem 1rem;
+      padding: 1rem;
     }
 
     /* ── Session bar ───────────────────────────────────────────────── */
+
+    .review-stack {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1rem;
+    }
 
     .session-bar {
       display: flex;
@@ -129,7 +139,6 @@
       font-size: 0.8rem;
       color: var(--text-muted);
       font-family: Georgia, serif;
-      margin-bottom: 1.5rem;
     }
 
     .session-bar b { color: var(--text-heading); }
@@ -141,7 +150,6 @@
       width: 380px;
       height: 250px;
       cursor: pointer;
-      margin-bottom: 1.5rem;
     }
 
     .card {
@@ -218,7 +226,6 @@
       color: var(--text-secondary);
       cursor: pointer;
       transition: background 0.15s, color 0.15s;
-      margin-bottom: 1.5rem;
     }
 
     .flip-btn:hover { background: var(--btn-hover-bg); color: var(--text-primary); }
@@ -228,7 +235,6 @@
     .rating-area {
       display: flex;
       gap: 0.75rem;
-      margin-bottom: 1.5rem;
     }
 
     .rate-btn {
@@ -303,11 +309,31 @@
 
     /* ── Responsive ────────────────────────────────────────────────── */
 
-    @media (max-width: 440px) {
-      .card-scene { width: 100%; height: 210px; }
-      .card-telugu { font-size: 2rem; }
-      .rate-btn { padding: 0.5rem 0.75rem; min-width: 56px; }
-      .rating-area { gap: 0.5rem; }
+    @media (max-width: 480px) {
+      .main { padding: 1.5rem 0.75rem; }
+
+      .card-scene { width: 100%; height: 220px; }
+
+      .card-telugu { font-size: 2.1rem; }
+
+      .card-face { padding: 1.5rem 1.2rem; }
+
+      .flip-btn { min-height: 44px; width: 100%; max-width: 260px; }
+
+      .rating-area { gap: 0.5rem; width: 100%; justify-content: center; }
+
+      .rate-btn {
+        padding: 0.6rem 0;
+        min-width: 0;
+        flex: 1;
+        max-width: 80px;
+        min-height: 52px;
+      }
+
+      /* Prevent tap delay */
+      .flip-btn, .rate-btn, .card-scene, .theme-toggle, .nav-left {
+        touch-action: manipulation;
+      }
     }
   </style>
   <script>(function(){ var t=localStorage.getItem('theme'); if(t) document.documentElement.dataset.theme=t; })();</script>
@@ -345,7 +371,7 @@
 
     <!-- Active review session -->
     <div id="reviewUi" hidden>
-      <div style="display:flex;flex-direction:column;align-items:center;">
+      <div class="review-stack">
 
         <div class="session-bar">
           <span>Remaining: <b id="remainingCount">0</b></span>
