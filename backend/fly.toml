@@ -1,41 +1,46 @@
-app = "kathalu"
-primary_region = "iad"
+# fly.toml app configuration file generated for kathalu on 2026-04-29T00:44:14-04:00
+#
+# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
+#
+
+app = 'kathalu'
+primary_region = 'iad'
 
 [build]
 
 [http_service]
   internal_port = 8000
   force_https = true
-  auto_stop_machines = "stop"
+  auto_stop_machines = 'stop'
   auto_start_machines = true
   min_machines_running = 0
-  processes = ["app"]
+  processes = ['app']
 
-[http_service.concurrency]
-  type = "requests"
-  soft_limit = 200
-  hard_limit = 250
-
-[[vm]]
-  size = "shared-cpu-1x"
-  memory = "256mb"
+  [http_service.concurrency]
+    type = 'requests'
+    hard_limit = 250
+    soft_limit = 200
 
 [[services]]
-  protocol = "tcp"
+  protocol = 'tcp'
   internal_port = 8000
 
   [[services.ports]]
     port = 80
-    handlers = ["http"]
+    handlers = ['http']
     force_https = true
 
   [[services.ports]]
     port = 443
-    handlers = ["tls", "http"]
+    handlers = ['tls', 'http']
 
-[[services.http_checks]]
-  interval = "30s"
-  timeout = "5s"
-  grace_period = "10s"
-  method = "get"
-  path = "/health"
+  [[services.http_checks]]
+    interval = '30s'
+    timeout = '5s'
+    grace_period = '10s'
+    method = 'get'
+    path = '/health'
+
+[[vm]]
+  size = 'shared-cpu-1x'
+  memory = '256mb'
