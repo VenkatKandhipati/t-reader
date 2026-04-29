@@ -579,6 +579,7 @@
 
   <div class="header">
     <div class="header-actions">
+      <span id="authSlot"></span>
       <a href="flashcard.html" class="review-link" id="reviewLink">
         Review
         <span class="review-due-badge" id="reviewDueBadge" style="display:none;"></span>
@@ -601,7 +602,9 @@
   <div class="bookshelf" id="bookshelf"></div>
 
   <script src="stories.js"></script>
+  <script type="module" src="./js/sync.js"></script>
   <script>
+    window.addEventListener('kathalu:synced', () => { location.reload(); }, { once: true });
     const BOOK_COLORS = [
       'book-color-1', 'book-color-2', 'book-color-3',
       'book-color-4', 'book-color-5', 'book-color-6',
