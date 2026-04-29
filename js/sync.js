@@ -151,7 +151,9 @@ async function pushReadingDaysDiff(next) {
 
 // Called whenever one of the tracked keys is written.
 async function onLocalWrite(key) {
-  if (!(await isSignedIn())) return;
+  const signedIn = await isSignedIn();
+  console.log("[kathalu sync] onLocalWrite", key, "signedIn:", signedIn);
+  if (!signedIn) return;
   const raw = localStorage.getItem(key);
   const next = safeParse(raw, key === "readingDates" ? [] : {});
   try {
@@ -164,17 +166,21 @@ async function onLocalWrite(key) {
   lastKnown[key] = next;
 }
 
-// ── Monkey-patch localStorage.setItem for tracked keys ──────────────────────
+// ── Monkey-patch Storage.prototype.setItem for tracked keys ─────────────────
+// Patch the prototype (not the instance) so it works reliably across browsers
+// including Safari. Guard against double-install across module re-imports.
 
 function installWriteInterceptor() {
-  const orig = localStorage.setItem.bind(localStorage);
-  localStorage.setItem = function (key, value) {
-    orig(key, value);
-    if (TRACKED.has(key)) {
-      // Fire and forget; do not block callers.
+  if (Storage.prototype.__kathaluPatched) return;
+  const orig = Storage.prototype.setItem;
+  Storage.prototype.setItem = function (key, value) {
+    orig.call(this, key, value);
+    if (this === localStorage && TRACKED.has(key)) {
+      console.log("[kathalu sync] intercepted setItem", key);
       queueMicrotask(() => onLocalWrite(key));
     }
   };
+  Storage.prototype.__kathaluPatched = true;
 }
 
 // ── Card-rating detection (intercept rate path for SM-2 server update) ─────
