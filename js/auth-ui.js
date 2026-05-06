@@ -12,11 +12,13 @@ import {
 } from "./storage.js";
 
 const STYLE = `
+  .kathalu-auth-wrap { position: relative; display: inline-block; }
+
   .kathalu-auth-chip {
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    padding: 4px 10px;
+    padding: 6px 12px;
     border: 1px solid var(--btn-border, #b5b0a6);
     border-radius: 999px;
     background: transparent;
@@ -24,8 +26,79 @@ const STYLE = `
     font: inherit;
     color: var(--text-primary, #2c2c2c);
     font-size: 0.85rem;
+    line-height: 1;
   }
   .kathalu-auth-chip:hover { background: var(--btn-hover-bg, rgba(0,0,0,0.05)); }
+  .kathalu-auth-chip:focus-visible {
+    outline: 2px solid var(--accent, #b5531a);
+    outline-offset: 2px;
+  }
+
+  .kathalu-avatar {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--accent, #b5531a);
+    color: #fff;
+    font-size: 0.8rem;
+    font-weight: 600;
+    border: 1px solid var(--btn-border, #b5b0a6);
+    cursor: pointer;
+    padding: 0;
+    line-height: 1;
+  }
+  .kathalu-avatar:hover { opacity: 0.9; }
+  .kathalu-avatar:focus-visible {
+    outline: 2px solid var(--accent, #b5531a);
+    outline-offset: 2px;
+  }
+
+  .kathalu-menu {
+    position: absolute;
+    top: calc(100% + 6px);
+    right: 0;
+    min-width: 200px;
+    background: var(--page-bg, #f5f0e6);
+    color: var(--text-primary, #2c2c2c);
+    border: 1px solid var(--btn-border, #b5b0a6);
+    border-radius: 8px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+    padding: 6px;
+    z-index: 10000;
+    font-size: 0.85rem;
+  }
+  .kathalu-menu-label {
+    padding: 8px 10px 4px;
+    color: var(--text-tertiary, #666);
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .kathalu-menu-user {
+    padding: 0 10px 8px;
+    color: var(--text-primary, #2c2c2c);
+    font-weight: 600;
+    word-break: break-all;
+    border-bottom: 1px solid var(--btn-border, #b5b0a6);
+    margin-bottom: 6px;
+  }
+  .kathalu-menu-item {
+    display: block;
+    width: 100%;
+    text-align: left;
+    padding: 8px 10px;
+    background: transparent;
+    border: none;
+    border-radius: 6px;
+    color: inherit;
+    font: inherit;
+    cursor: pointer;
+  }
+  .kathalu-menu-item:hover { background: var(--btn-hover-bg, rgba(0,0,0,0.05)); }
+  .kathalu-menu-item.kathalu-danger { color: var(--accent, #b5531a); }
 
   .kathalu-modal-back {
     position: fixed; inset: 0;
@@ -171,6 +244,43 @@ function openModal() {
   setTimeout(() => usernameInput.focus(), 0);
 }
 
+function openAccountMenu(anchor, name, onSignOut) {
+  const userRow = h("div", { class: "kathalu-menu-user" }, name);
+  const signOutBtn = h(
+    "button",
+    {
+      type: "button",
+      class: "kathalu-menu-item kathalu-danger",
+      onclick: () => { close(); onSignOut(); },
+    },
+    "Sign out"
+  );
+  const menu = h(
+    "div",
+    { class: "kathalu-menu", role: "menu" },
+    h("div", { class: "kathalu-menu-label" }, "Signed in as"),
+    userRow,
+    signOutBtn
+  );
+
+  function close() {
+    menu.remove();
+    document.removeEventListener("keydown", onKey);
+    document.removeEventListener("mousedown", onDocClick, true);
+    anchor.setAttribute("aria-expanded", "false");
+  }
+  function onKey(e) { if (e.key === "Escape") close(); }
+  function onDocClick(e) {
+    if (!menu.contains(e.target) && e.target !== anchor) close();
+  }
+
+  anchor.parentElement.appendChild(menu);
+  anchor.setAttribute("aria-expanded", "true");
+  document.addEventListener("keydown", onKey);
+  document.addEventListener("mousedown", onDocClick, true);
+  setTimeout(() => signOutBtn.focus(), 0);
+}
+
 export async function mountAuthUI(container) {
   ensureStyle();
   const slot = container || document.getElementById("authSlot");
@@ -178,31 +288,43 @@ export async function mountAuthUI(container) {
 
   async function render() {
     slot.innerHTML = "";
+    const wrap = h("span", { class: "kathalu-auth-wrap" });
+    slot.appendChild(wrap);
+
     const signed = await isSignedIn();
     if (signed) {
       const user = await currentUser();
       const name = user?.user_metadata?.username || "account";
-      const chip = h(
+      const initial = (name[0] || "?").toUpperCase();
+      const avatar = h(
         "button",
         {
-          class: "kathalu-auth-chip",
-          title: "Sign out",
-          onclick: async () => {
-            await signOut();
-            await render();
-            window.location.reload();
+          type: "button",
+          class: "kathalu-avatar",
+          title: `Signed in as ${name}`,
+          "aria-label": `Account menu for ${name}`,
+          "aria-haspopup": "menu",
+          "aria-expanded": "false",
+          onclick: (e) => {
+            e.stopPropagation();
+            if (wrap.querySelector(".kathalu-menu")) return;
+            openAccountMenu(avatar, name, async () => {
+              await signOut();
+              await render();
+              window.location.reload();
+            });
           },
         },
-        `${name} · sign out`
+        initial
       );
-      slot.appendChild(chip);
+      wrap.appendChild(avatar);
     } else {
       const chip = h(
         "button",
-        { class: "kathalu-auth-chip", onclick: openModal },
+        { type: "button", class: "kathalu-auth-chip", onclick: openModal },
         "Sign in"
       );
-      slot.appendChild(chip);
+      wrap.appendChild(chip);
     }
   }
   await render();
