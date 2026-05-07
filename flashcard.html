@@ -612,17 +612,32 @@
 
     const allCards = getCards();
 
-    if (Object.keys(allCards).length === 0) {
-      showView('emptyState');
-    } else if (session.length === 0) {
-      const total = Object.keys(allCards).length;
-      document.getElementById('doneStats').textContent =
-        'Nothing due today · ' + total + ' card' + (total === 1 ? '' : 's') + ' in deck';
-      showView('doneState');
-    } else {
-      showView('reviewUi');
-      renderCard(session[0]);
+    function initSession() {
+      const allCards = getCards();
+      session = buildSession();
+      sessionIdx = 0;
+      sessionDone = 0;
+      requeued.clear();
+
+      if (Object.keys(allCards).length === 0) {
+        showView('emptyState');
+      } else if (session.length === 0) {
+        const total = Object.keys(allCards).length;
+        document.getElementById('doneStats').textContent =
+          'Nothing due today · ' + total + ' card' + (total === 1 ? '' : 's') + ' in deck';
+        showView('doneState');
+      } else {
+        showView('reviewUi');
+        renderCard(session[0]);
+      }
     }
+    initSession();
+
+    // Rebuild the session after cloud hydration — but only if the user hasn't
+    // started rating yet, so we don't yank a card mid-review.
+    window.addEventListener('kathalu:synced', () => {
+      if (sessionDone === 0) initSession();
+    });
 
     // ── Events ─────────────────────────────────────────────────────────────────
 

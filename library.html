@@ -675,18 +675,25 @@
       } catch { return 0; }
     }
 
-    const streak = calculateStreak();
-    if (streak > 0) {
-      document.getElementById('streakBadge').style.display = 'inline-flex';
-      document.getElementById('streakCount').textContent = streak;
-      document.querySelector('.streak-label').textContent =
-        streak === 1 ? 'day streak' : 'day streak';
+    function renderStreak() {
+      const streak = calculateStreak();
+      const badge = document.getElementById('streakBadge');
+      if (streak > 0) {
+        badge.style.display = 'inline-flex';
+        document.getElementById('streakCount').textContent = streak;
+        document.querySelector('.streak-label').textContent =
+          streak === 1 ? 'day streak' : 'day streak';
+      } else {
+        badge.style.display = 'none';
+      }
     }
+    renderStreak();
 
     // ── Build Shelf ───────────────────────────────────────────────────────
 
     function buildShelf() {
       const container = document.getElementById('bookshelf');
+      container.innerHTML = '';
       const shelf = document.createElement('div');
       shelf.className = 'shelf';
 
@@ -814,18 +821,30 @@
 
     // ── Review Badge ──────────────────────────────────────────────────────────
 
-    (function () {
+    function renderReviewBadge() {
+      const badge = document.getElementById('reviewDueBadge');
       try {
         const cards = JSON.parse(localStorage.getItem('vocabCards') || '{}');
         const today = new Date().toISOString().slice(0, 10);
         const due = Object.values(cards).filter(c => c.nextReview <= today).length;
         if (due > 0) {
-          const badge = document.getElementById('reviewDueBadge');
           badge.textContent = due;
           badge.style.display = '';
+        } else {
+          badge.style.display = 'none';
         }
-      } catch {}
-    })();
+      } catch {
+        badge.style.display = 'none';
+      }
+    }
+    renderReviewBadge();
+
+    // Re-render whenever cloud hydration finishes (after sign-in).
+    window.addEventListener('kathalu:synced', () => {
+      renderStreak();
+      buildShelf();
+      renderReviewBadge();
+    });
   </script>
 </body>
 </html>

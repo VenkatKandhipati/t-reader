@@ -17,6 +17,7 @@ import {
 } from "./storage.js";
 import { mountAuthUI } from "./auth-ui.js";
 import { CONFIG } from "./config.js";
+import { setOnlineStatus, setSyncStatus } from "./notify.js";
 
 const TRACKED = new Set(["vocabCards", "storyProgress", "readingDates"]);
 
@@ -30,18 +31,26 @@ async function authHeader() {
 async function api(path, opts = {}) {
   const h = await authHeader();
   if (!h) return null;
-  const res = await fetch(CONFIG.API_URL + path, {
-    ...opts,
-    headers: {
-      "Content-Type": "application/json",
-      ...h,
-      ...(opts.headers || {}),
-    },
-  });
+  let res;
+  try {
+    res = await fetch(CONFIG.API_URL + path, {
+      ...opts,
+      headers: {
+        "Content-Type": "application/json",
+        ...h,
+        ...(opts.headers || {}),
+      },
+    });
+  } catch (e) {
+    setOnlineStatus(false);
+    throw e;
+  }
   if (!res.ok) {
+    if (res.status === 401 || res.status >= 500) setOnlineStatus(false);
     const t = await res.text().catch(() => "");
     throw new Error(`API ${res.status}: ${t || res.statusText}`);
   }
+  setOnlineStatus(true);
   return res.status === 204 ? null : res.json();
 }
 
@@ -156,12 +165,15 @@ async function onLocalWrite(key) {
   if (!signedIn) return;
   const raw = localStorage.getItem(key);
   const next = safeParse(raw, key === "readingDates" ? [] : {});
+  setSyncStatus("syncing");
   try {
     if (key === "vocabCards") await pushCardsDiff(next);
     else if (key === "storyProgress") await pushProgressDiff(next);
     else if (key === "readingDates") await pushReadingDaysDiff(next);
+    setSyncStatus("synced");
   } catch (e) {
     console.warn("[kathalu sync] push failed", key, e);
+    setSyncStatus("error");
   }
   lastKnown[key] = next;
 }
@@ -194,11 +206,18 @@ async function hydrateLocalFromCloud(force = false) {
   if (!(await isSignedIn())) return;
   if (!force && sessionStorage.getItem(HYDRATE_KEY)) return;
 
-  const [cardsMap, progress, streakData] = await Promise.all([
-    getCards(),
-    getStoryProgress(),
-    api("/streak"),
-  ]);
+  setSyncStatus("syncing");
+  let cardsMap, progress, streakData;
+  try {
+    [cardsMap, progress, streakData] = await Promise.all([
+      getCards(),
+      getStoryProgress(),
+      api("/streak"),
+    ]);
+  } catch (e) {
+    setSyncStatus("error");
+    throw e;
+  }
 
   // Only overwrite if cloud has data, or local is empty. This keeps freshly
   // clicked words alive across navigations while the background POST is in
@@ -229,6 +248,7 @@ async function hydrateLocalFromCloud(force = false) {
   }
   localStorage.setItem("readingDates", JSON.stringify(dates));
   snapshot();
+  setSyncStatus("synced");
 }
 
 // ── Boot ────────────────────────────────────────────────────────────────────

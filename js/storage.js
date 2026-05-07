@@ -4,6 +4,7 @@
 
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { CONFIG } from "./config.js";
+import { setOnlineStatus, showToast } from "./notify.js";
 
 export const sb = createClient(CONFIG.SUPABASE_URL, CONFIG.SUPABASE_ANON_KEY, {
   auth: { persistSession: true, autoRefreshToken: true },
@@ -81,14 +82,24 @@ async function authedFetch(path, opts = {}) {
   if (_session?.access_token) {
     headers.Authorization = "Bearer " + _session.access_token;
   }
-  const res = await fetch(CONFIG.API_URL + path, { ...opts, headers });
+  let res;
+  try {
+    res = await fetch(CONFIG.API_URL + path, { ...opts, headers });
+  } catch (e) {
+    setOnlineStatus(false);
+    throw e;
+  }
   if (res.status === 401) {
     _session = null;
+    setOnlineStatus(false);
+    showToast("Session expired — please sign in again.", "warn", 5000);
   }
   if (!res.ok) {
     const text = await res.text().catch(() => "");
+    if (res.status >= 500) setOnlineStatus(false);
     throw new Error(`API ${res.status}: ${text || res.statusText}`);
   }
+  setOnlineStatus(true);
   if (res.status === 204) return null;
   return res.json();
 }

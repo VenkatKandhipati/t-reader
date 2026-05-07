@@ -6,10 +6,12 @@ import {
   currentUser,
   importLocalIfFirstLogin,
   isSignedIn,
+  sb,
   signIn,
   signOut,
   signUp,
 } from "./storage.js";
+import { getSyncStatus, isOnline, onStatusChange, onSyncStatus } from "./notify.js";
 
 const STYLE = `
   .kathalu-auth-wrap { position: relative; display: inline-block; }
@@ -100,6 +102,57 @@ const STYLE = `
   .kathalu-menu-item:hover { background: var(--btn-hover-bg, rgba(0,0,0,0.05)); }
   .kathalu-menu-item.kathalu-danger { color: var(--accent, #b5531a); }
 
+  .kathalu-offline {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 8px;
+    border-radius: 999px;
+    background: var(--btn-hover-bg, rgba(0,0,0,0.05));
+    border: 1px solid var(--btn-border, #b5b0a6);
+    color: var(--accent, #b5531a);
+    font-size: 0.72rem;
+    line-height: 1;
+    margin-right: 6px;
+    vertical-align: middle;
+  }
+  .kathalu-offline::before {
+    content: "";
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--accent, #b5531a);
+  }
+
+  .kathalu-sync-dot {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 18px; height: 18px;
+    margin-right: 4px;
+    vertical-align: middle;
+    color: var(--text-tertiary, #888);
+    font-size: 0.75rem;
+    line-height: 1;
+  }
+  .kathalu-sync-dot[data-state="idle"] { display: none; }
+  .kathalu-sync-dot[data-state="syncing"] { color: var(--accent-gold, #c8a96e); }
+  .kathalu-sync-dot[data-state="synced"]  { color: var(--accent-green, #6b8f3a); }
+  .kathalu-sync-dot[data-state="error"]   { color: var(--accent, #b5531a); }
+  .kathalu-sync-dot[data-state="syncing"] svg { animation: kathalu-spin 1s linear infinite; }
+
+  @keyframes kathalu-spin { to { transform: rotate(360deg); } }
+
+  .kathalu-spinner {
+    display: inline-block;
+    width: 14px; height: 14px;
+    border: 2px solid currentColor;
+    border-right-color: transparent;
+    border-radius: 50%;
+    vertical-align: -2px;
+    margin-right: 6px;
+    animation: kathalu-spin 0.7s linear infinite;
+  }
+
   .kathalu-modal-back {
     position: fixed; inset: 0;
     background: rgba(0,0,0,0.45);
@@ -172,6 +225,31 @@ function h(tag, attrs = {}, ...children) {
   return el;
 }
 
+function friendlyAuthError(ex, mode) {
+  const raw = (ex?.message || String(ex) || "").toLowerCase();
+  if (raw.includes("user already registered") || raw.includes("already exists")) {
+    return "That username is taken — try signing in or pick another.";
+  }
+  if (raw.includes("invalid login credentials") || raw.includes("invalid_grant")) {
+    return "Wrong username or password.";
+  }
+  if (raw.includes("password should be at least")) {
+    return "Password must be at least 6 characters.";
+  }
+  if (raw.includes("rate limit") || raw.includes("too many requests")) {
+    return "Too many attempts — wait a minute and try again.";
+  }
+  if (raw.includes("failed to fetch") || raw.includes("network") || raw.includes("err_network")) {
+    return "Can't reach server — check your connection.";
+  }
+  if (raw.startsWith("api 5")) {
+    return "Server error — please try again.";
+  }
+  return mode === "signup"
+    ? "Couldn't create your account. " + (ex?.message || "")
+    : "Couldn't sign you in. " + (ex?.message || "");
+}
+
 function openModal() {
   let mode = "signin";
   const err = h("div", { class: "kathalu-err" });
@@ -192,13 +270,29 @@ function openModal() {
     err.textContent = "";
   }
 
+  function setBusy(busy) {
+    submit.disabled = busy;
+    cancel.disabled = busy;
+    usernameInput.disabled = busy;
+    passwordInput.disabled = busy;
+    signInBtn.disabled = busy;
+    signUpBtn.disabled = busy;
+    submit.innerHTML = "";
+    if (busy) {
+      submit.appendChild(h("span", { class: "kathalu-spinner", "aria-hidden": "true" }));
+      submit.append(mode === "signin" ? "Signing in…" : "Creating account…");
+    } else {
+      submit.append(mode === "signin" ? "Sign in" : "Create account");
+    }
+  }
+
   const form = h(
     "form",
     {
       onsubmit: async (e) => {
         e.preventDefault();
         err.textContent = "";
-        submit.disabled = true;
+        setBusy(true);
         try {
           const u = usernameInput.value.trim();
           const p = passwordInput.value;
@@ -211,11 +305,10 @@ function openModal() {
           }
           await importLocalIfFirstLogin().catch(() => null);
           close();
-          window.location.reload();
         } catch (ex) {
-          err.textContent = ex.message || String(ex);
+          err.textContent = friendlyAuthError(ex, mode);
         } finally {
-          submit.disabled = false;
+          setBusy(false);
         }
       },
     },
@@ -286,12 +379,42 @@ export async function mountAuthUI(container) {
   const slot = container || document.getElementById("authSlot");
   if (!slot) return;
 
+  function syncDotEl(state) {
+    const labels = {
+      idle: "",
+      syncing: "Syncing…",
+      synced: "All changes saved",
+      error: "Sync failed — will retry",
+    };
+    const glyphs = {
+      syncing: "<svg width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2.5' stroke-linecap='round'><path d='M21 12a9 9 0 1 1-3-6.7'/><polyline points='21 4 21 9 16 9'/></svg>",
+      synced:  "<svg width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'><polyline points='4 12 10 18 20 6'/></svg>",
+      error:   "<svg width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2.5' stroke-linecap='round'><path d='M12 3 1 21h22Z'/><line x1='12' y1='10' x2='12' y2='14'/><line x1='12' y1='17' x2='12' y2='17.5'/></svg>",
+    };
+    const el = h("span", {
+      class: "kathalu-sync-dot",
+      "data-state": state,
+      title: labels[state] || "",
+      "aria-label": labels[state] || "",
+    });
+    el.innerHTML = glyphs[state] || "";
+    return el;
+  }
+
   async function render() {
     slot.innerHTML = "";
     const wrap = h("span", { class: "kathalu-auth-wrap" });
     slot.appendChild(wrap);
 
     const signed = await isSignedIn();
+
+    if (signed) {
+      wrap.appendChild(syncDotEl(getSyncStatus()));
+    }
+    if (signed && !isOnline()) {
+      wrap.appendChild(h("span", { class: "kathalu-offline", title: "Working offline — changes saved locally" }, "Offline"));
+    }
+
     if (signed) {
       const user = await currentUser();
       const name = user?.user_metadata?.username || "account";
@@ -310,8 +433,6 @@ export async function mountAuthUI(container) {
             if (wrap.querySelector(".kathalu-menu")) return;
             openAccountMenu(avatar, name, async () => {
               await signOut();
-              await render();
-              window.location.reload();
             });
           },
         },
@@ -328,6 +449,18 @@ export async function mountAuthUI(container) {
     }
   }
   await render();
+
+  // Re-render the chip whenever auth state flips so we don't need full reloads.
+  sb.auth.onAuthStateChange(() => { render(); });
+  // Also re-render when the connection status flips, to show/hide "Offline".
+  onStatusChange(() => { render(); });
+  // Update only the sync dot — avoid full re-render on every write.
+  onSyncStatus((state) => {
+    const dot = slot.querySelector(".kathalu-sync-dot");
+    if (!dot) return;
+    const fresh = syncDotEl(state);
+    dot.replaceWith(fresh);
+  });
 
   try {
     if (await isSignedIn()) await importLocalIfFirstLogin();
