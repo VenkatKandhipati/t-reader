@@ -95,3 +95,16 @@ class ReadingDay(Base):
 
     user_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True)
     day: Mapped[date] = mapped_column(Date, primary_key=True)
+
+
+class ReadingSession(Base):
+    __tablename__ = "reading_sessions"
+    __table_args__ = {"schema": "public"}
+
+    id: Mapped[int] = mapped_column(BigInteger, primary_key=True, autoincrement=True)
+    user_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), nullable=False, index=True)
+    story_idx: Mapped[int] = mapped_column(Integer, nullable=False)
+    started_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=text("now()"), nullable=False
+    )
+    pct: Mapped[int | None] = mapped_column(Integer)

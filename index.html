@@ -746,6 +746,11 @@
 
   <script src="stories.js"></script>
   <script type="module" src="./js/sync.js"></script>
+  <script type="module">
+    import { recordReadingSession } from "./js/storage.js";
+    window.kathalu = window.kathalu || {};
+    window.kathalu.recordReadingSession = recordReadingSession;
+  </script>
   <script>
     // ── Daily Story Selection ────────────────────────────────────────────────
 
@@ -1076,6 +1081,7 @@
       totalWords = wordCount;
       resetStats();
       recordReadingDate();
+      window.kathalu?.recordReadingSession?.(index, null);
 
       // Update bottom bar
       document.getElementById('wordCount').textContent = wordCount + ' పదాలు';

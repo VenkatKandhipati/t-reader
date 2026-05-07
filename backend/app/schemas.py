@@ -97,3 +97,24 @@ class CardStateSync(BaseModel):
 
 class CardStateSyncBatch(BaseModel):
     cards: list[CardStateSync]
+
+
+class ReadingSessionIn(BaseModel):
+    story_idx: int = Field(..., ge=0)
+    pct: int | None = Field(default=None, ge=0, le=100)
+
+
+class HeatmapPoint(BaseModel):
+    day: date
+    count: int
+
+
+class HeatmapOut(BaseModel):
+    range: str
+    start: date
+    end: date
+    days: list[HeatmapPoint]
+
+
+class PasswordChangeIn(BaseModel):
+    new_password: str = Field(..., min_length=6, max_length=200)

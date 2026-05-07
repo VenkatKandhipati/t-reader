@@ -402,6 +402,64 @@
       font-size: 0.75rem;
     }
 
+    /* ── Week heatmap on library ───────────────────────── */
+
+    .week-heatmap {
+      display: flex;
+      justify-content: center;
+      gap: 6px;
+      margin: 0.6rem auto 0;
+      max-width: 320px;
+    }
+    .heat-day {
+      width: 32px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+      cursor: default;
+    }
+    .heat-day-label {
+      font-size: 0.62rem;
+      color: var(--stats-label);
+      font-family: Georgia, serif;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+    .heat-day-cell {
+      width: 28px;
+      height: 28px;
+      border-radius: 4px;
+      background: var(--ring-bg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.7rem;
+      font-family: Georgia, serif;
+      color: var(--stats-label);
+      transition: transform 0.15s;
+    }
+    .heat-day-cell.read {
+      background: var(--accent-green);
+      color: #fff;
+      font-weight: 600;
+    }
+    .heat-day.today .heat-day-cell {
+      box-shadow: 0 0 0 2px var(--accent);
+    }
+    .heat-day.today.unread .heat-day-cell {
+      animation: pulse-heat 1.6s ease-in-out infinite;
+    }
+    @keyframes pulse-heat {
+      0%, 100% { box-shadow: 0 0 0 2px var(--accent); }
+      50% { box-shadow: 0 0 0 4px rgba(181, 83, 26, 0.35); }
+    }
+    .heat-day:hover .heat-day-cell { transform: translateY(-2px); }
+    @media (max-width: 480px) {
+      .heat-day { width: 28px; }
+      .heat-day-cell { width: 24px; height: 24px; font-size: 0.65rem; }
+    }
+
     /* ── Progress Badge on Books ──────────────────────── */
 
     .book-progress {
@@ -597,6 +655,7 @@
       <span class="streak-count" id="streakCount"></span>
       <span class="streak-label">day streak</span>
     </div>
+    <div class="week-heatmap" id="weekHeatmap"></div>
   </div>
 
   <div class="bookshelf" id="bookshelf"></div>
@@ -688,6 +747,45 @@
       }
     }
     renderStreak();
+
+    // ── Week Heatmap ──────────────────────────────────────────────────────
+
+    function renderWeekHeatmap() {
+      const host = document.getElementById('weekHeatmap');
+      if (!host) return;
+      let dates = [];
+      try { dates = JSON.parse(localStorage.getItem('readingDates') || '[]'); } catch {}
+      const set = new Set(dates);
+      const todayKey = new Date().toISOString().slice(0, 10);
+      const dayLabels = ['S','M','T','W','T','F','S'];
+
+      host.innerHTML = '';
+      for (let i = 6; i >= 0; i--) {
+        const d = new Date();
+        d.setHours(0, 0, 0, 0);
+        d.setDate(d.getDate() - i);
+        const key = d.toISOString().slice(0, 10);
+        const isToday = key === todayKey;
+        const read = set.has(key);
+
+        const wrap = document.createElement('div');
+        wrap.className = 'heat-day' + (isToday ? ' today' : '') + (isToday && !read ? ' unread' : '');
+        wrap.title = key + (read ? ' — read' : '');
+
+        const label = document.createElement('div');
+        label.className = 'heat-day-label';
+        label.textContent = dayLabels[d.getDay()];
+
+        const cell = document.createElement('div');
+        cell.className = 'heat-day-cell' + (read ? ' read' : '');
+        cell.textContent = d.getDate();
+
+        wrap.appendChild(label);
+        wrap.appendChild(cell);
+        host.appendChild(wrap);
+      }
+    }
+    renderWeekHeatmap();
 
     // ── Build Shelf ───────────────────────────────────────────────────────
 
@@ -842,6 +940,7 @@
     // Re-render whenever cloud hydration finishes (after sign-in).
     window.addEventListener('kathalu:synced', () => {
       renderStreak();
+      renderWeekHeatmap();
       buildShelf();
       renderReviewBadge();
     });

@@ -54,9 +54,16 @@ let _sessionReady;
 
 async function ensureSession() {
   if (_sessionReady) return _sessionReady;
-  _sessionReady = sb.auth.getSession().then(({ data }) => {
+  const get = sb.auth.getSession().then(({ data }) => {
     _session = data.session;
   });
+  const timeout = new Promise((resolve) =>
+    setTimeout(() => {
+      _session = null;
+      resolve();
+    }, 5000)
+  );
+  _sessionReady = Promise.race([get, timeout]);
   sb.auth.onAuthStateChange((_evt, session) => {
     _session = session;
   });
@@ -250,6 +257,41 @@ export async function getStreak() {
   }
   const { streak } = await authedFetch("/streak");
   return streak;
+}
+
+export async function recordReadingSession(storyIdx, pct = null) {
+  if (!(await isSignedIn())) return;
+  try {
+    await authedFetch("/account/sessions", {
+      method: "POST",
+      body: JSON.stringify({ story_idx: storyIdx, pct }),
+    });
+  } catch {}
+}
+
+export async function getAccountStats() {
+  if (!(await isSignedIn())) return null;
+  return authedFetch("/account/stats");
+}
+
+export async function getHeatmap(range = "year") {
+  if (!(await isSignedIn())) return null;
+  return authedFetch(`/account/heatmap?range=${encodeURIComponent(range)}`);
+}
+
+export async function changePassword(newPassword) {
+  if (!(await isSignedIn())) throw new Error("Not signed in");
+  await authedFetch("/account/password", {
+    method: "POST",
+    body: JSON.stringify({ new_password: newPassword }),
+  });
+}
+
+export async function deleteAccount() {
+  if (!(await isSignedIn())) throw new Error("Not signed in");
+  await authedFetch("/account", { method: "DELETE" });
+  await sb.auth.signOut();
+  _session = null;
 }
 
 // ── Auth ────────────────────────────────────────────────────────────────────

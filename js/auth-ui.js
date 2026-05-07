@@ -100,6 +100,7 @@ const STYLE = `
     cursor: pointer;
   }
   .kathalu-menu-item:hover { background: var(--btn-hover-bg, rgba(0,0,0,0.05)); }
+  a.kathalu-menu-item { text-decoration: none; }
   .kathalu-menu-item.kathalu-danger { color: var(--accent, #b5531a); }
 
   .kathalu-offline {
@@ -339,6 +340,15 @@ function openModal() {
 
 function openAccountMenu(anchor, name, onSignOut) {
   const userRow = h("div", { class: "kathalu-menu-user" }, name);
+  const settingsLink = h(
+    "a",
+    {
+      href: "account.html",
+      class: "kathalu-menu-item",
+      role: "menuitem",
+    },
+    "Account settings"
+  );
   const signOutBtn = h(
     "button",
     {
@@ -353,6 +363,7 @@ function openAccountMenu(anchor, name, onSignOut) {
     { class: "kathalu-menu", role: "menu" },
     h("div", { class: "kathalu-menu-label" }, "Signed in as"),
     userRow,
+    settingsLink,
     signOutBtn
   );
 

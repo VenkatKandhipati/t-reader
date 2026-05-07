@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Account — Kathalu</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Telugu:wght@400;500;700&family=Noto+Serif+Telugu:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #e8e4dd;
+      --page-bg: #f5f0e6;
+      --text-primary: #2c2c2c;
+      --text-secondary: #555;
+      --text-tertiary: #666;
+      --text-muted: #888;
+      --text-heading: #3a2a10;
+      --text-subheading: #6b5a3e;
+      --stats-label: #8a7a5a;
+      --stats-border: #e2d9c8;
+      --tile-bg: #fffaf0;
+      --accent: #b5531a;
+      --accent-gold: #c8a96e;
+      --accent-green: #6b8f3a;
+      --danger: #b5531a;
+      --heat-0: #ece6d8;
+      --heat-1: #d8c79a;
+      --heat-2: #c8a96e;
+      --heat-3: #a47a2c;
+      --heat-4: #6b8f3a;
+      --btn-border: #b5b0a6;
+      --btn-hover-bg: rgba(0, 0, 0, 0.05);
+    }
+
+    [data-theme="dark"] {
+      --bg: #1a1a1a;
+      --page-bg: #252525;
+      --text-primary: #e0ddd6;
+      --text-secondary: #b0ada6;
+      --text-tertiary: #999;
+      --text-muted: #777;
+      --text-heading: #e8dcc8;
+      --text-subheading: #c4a878;
+      --stats-label: #b0a080;
+      --stats-border: #3a3530;
+      --tile-bg: #2d2924;
+      --accent: #d4743a;
+      --accent-gold: #d4b478;
+      --accent-green: #8ab450;
+      --danger: #d4743a;
+      --heat-0: #2c2820;
+      --heat-1: #4a3a25;
+      --heat-2: #806430;
+      --heat-3: #a88a40;
+      --heat-4: #8ab450;
+      --btn-border: #555;
+      --btn-hover-bg: rgba(255, 255, 255, 0.06);
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text-primary);
+      min-height: 100vh;
+      font-family: Georgia, 'Noto Serif Telugu', serif;
+    }
+
+    .nav {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 1rem 1.5rem;
+      max-width: 980px;
+      margin: 0 auto;
+    }
+    .nav a.back {
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 0.85rem;
+      padding: 0.3rem 0.7rem;
+      border: 1px solid var(--btn-border);
+      border-radius: 4px;
+    }
+    .nav a.back:hover { background: var(--btn-hover-bg); color: var(--text-primary); }
+    .nav-spacer { flex: 1; }
+
+    main {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 0 1.5rem 4rem;
+    }
+
+    h1 {
+      font-size: 1.9rem;
+      color: var(--text-heading);
+      margin: 1rem 0 0.25rem;
+    }
+    .subtitle {
+      color: var(--stats-label);
+      font-size: 0.9rem;
+      margin-bottom: 2rem;
+    }
+
+    section { margin-bottom: 2.5rem; }
+    section h2 {
+      font-size: 1.1rem;
+      color: var(--text-subheading);
+      margin-bottom: 0.75rem;
+      letter-spacing: 0.02em;
+    }
+    section .section-hint {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-bottom: 0.9rem;
+    }
+
+    /* ── Tiles ───────────────────────────────────────── */
+    .tile-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 0.75rem;
+    }
+    .tile {
+      background: var(--tile-bg);
+      border: 1px solid var(--stats-border);
+      border-radius: 10px;
+      padding: 0.9rem 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.2rem;
+      min-height: 90px;
+    }
+    .tile-label {
+      font-size: 0.7rem;
+      color: var(--stats-label);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .tile-value {
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: var(--text-heading);
+      line-height: 1.1;
+    }
+    .tile-sub {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      margin-top: auto;
+    }
+    .tile-accent { color: var(--accent); }
+    .tile-green  { color: var(--accent-green); }
+    .tile-gold   { color: var(--accent-gold); }
+
+    /* ── Heatmap ─────────────────────────────────────── */
+    .heatmap-wrap {
+      background: var(--tile-bg);
+      border: 1px solid var(--stats-border);
+      border-radius: 10px;
+      padding: 1rem 1.2rem;
+      overflow-x: auto;
+    }
+    .heatmap-controls {
+      display: flex;
+      gap: 0.4rem;
+      margin-bottom: 0.8rem;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    .seg {
+      display: inline-flex;
+      border: 1px solid var(--btn-border);
+      border-radius: 6px;
+      overflow: hidden;
+    }
+    .seg button {
+      background: transparent;
+      color: var(--text-secondary);
+      border: none;
+      padding: 0.35rem 0.85rem;
+      font: inherit;
+      font-size: 0.82rem;
+      cursor: pointer;
+      border-right: 1px solid var(--btn-border);
+    }
+    .seg button:last-child { border-right: none; }
+    .seg button.active {
+      background: var(--accent);
+      color: #fff;
+    }
+    .seg button:not(.active):hover { background: var(--btn-hover-bg); }
+
+    .heat-legend {
+      margin-left: auto;
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+    .legend-cells { display: inline-flex; gap: 2px; }
+    .legend-cell {
+      width: 11px; height: 11px; border-radius: 2px;
+      border: 1px solid var(--stats-border);
+    }
+
+    .heatmap-svg { display: block; }
+    .heat-cell { transition: opacity 0.15s; }
+    .heat-cell:hover { stroke: var(--accent); stroke-width: 1.5; }
+
+    /* ── Forecast bars ───────────────────────────────── */
+    .forecast {
+      background: var(--tile-bg);
+      border: 1px solid var(--stats-border);
+      border-radius: 10px;
+      padding: 1rem 1.2rem;
+    }
+
+    /* ── Lists ───────────────────────────────────────── */
+    .word-list {
+      background: var(--tile-bg);
+      border: 1px solid var(--stats-border);
+      border-radius: 10px;
+      padding: 0.5rem 1rem;
+    }
+    .word-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.55rem 0;
+      border-bottom: 1px solid var(--stats-border);
+      font-family: 'Noto Sans Telugu', sans-serif;
+    }
+    .word-row:last-child { border-bottom: none; }
+    .word-telugu { font-size: 1rem; color: var(--text-heading); }
+    .word-trans { font-size: 0.78rem; color: var(--text-muted); margin-left: 0.5rem; font-family: Georgia, serif; }
+    .word-ease  { font-size: 0.78rem; color: var(--accent); font-family: Georgia, serif; }
+
+    /* ── Forms (password / delete) ──────────────────── */
+    .form-card {
+      background: var(--tile-bg);
+      border: 1px solid var(--stats-border);
+      border-radius: 10px;
+      padding: 1rem 1.2rem;
+      max-width: 480px;
+    }
+    .form-card label {
+      display: block;
+      font-size: 0.78rem;
+      color: var(--text-secondary);
+      margin-top: 0.6rem;
+    }
+    .form-card input {
+      width: 100%;
+      padding: 0.5rem 0.7rem;
+      margin-top: 0.25rem;
+      border: 1px solid var(--btn-border);
+      border-radius: 6px;
+      background: var(--bg);
+      color: inherit;
+      font: inherit;
+    }
+    .form-card .row { display: flex; gap: 0.5rem; margin-top: 1rem; }
+    .form-card button {
+      padding: 0.5rem 1rem;
+      border: 1px solid var(--btn-border);
+      background: transparent;
+      color: inherit;
+      border-radius: 6px;
+      font: inherit;
+      cursor: pointer;
+    }
+    .form-card button.primary {
+      background: var(--accent);
+      color: #fff;
+      border-color: var(--accent);
+    }
+    .form-card button.danger {
+      background: var(--danger);
+      color: #fff;
+      border-color: var(--danger);
+    }
+    .form-card button:disabled { opacity: 0.5; cursor: not-allowed; }
+    .form-msg { font-size: 0.8rem; margin-top: 0.5rem; min-height: 1em; }
+    .form-msg.ok  { color: var(--accent-green); }
+    .form-msg.err { color: var(--danger); }
+
+    .danger-zone {
+      border: 1px solid var(--danger);
+      background: var(--tile-bg);
+      border-radius: 10px;
+      padding: 1rem 1.2rem;
+      max-width: 480px;
+    }
+    .danger-zone p {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      margin-bottom: 0.8rem;
+    }
+
+    /* ── Bars ───────────────────────────────────────── */
+    .bar-row {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 0.3rem 0;
+      font-size: 0.82rem;
+    }
+    .bar-row .label { width: 70px; color: var(--text-muted); }
+    .bar-row .track {
+      flex: 1;
+      background: var(--stats-border);
+      border-radius: 4px;
+      height: 8px;
+      overflow: hidden;
+    }
+    .bar-row .fill { height: 100%; background: var(--accent-gold); }
+    .bar-row .count { width: 40px; text-align: right; color: var(--text-secondary); font-family: Georgia, serif; }
+
+    .empty {
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      text-align: center;
+      padding: 1.5rem 0;
+    }
+
+    .signed-out {
+      text-align: center;
+      padding: 4rem 1rem;
+      color: var(--text-muted);
+    }
+    .signed-out a {
+      color: var(--accent);
+      text-decoration: none;
+      border-bottom: 1px solid var(--accent);
+    }
+
+    @media (max-width: 600px) {
+      h1 { font-size: 1.5rem; }
+      .tile-value { font-size: 1.3rem; }
+    }
+  </style>
+  <script>(function(){ var t=localStorage.getItem('theme'); if(t) document.documentElement.dataset.theme=t; })();</script>
+</head>
+<body>
+  <div class="nav">
+    <a href="library.html" class="back">← Library</a>
+    <div class="nav-spacer"></div>
+    <span id="authSlot"></span>
+  </div>
+
+  <main id="root">
+    <h1>Account</h1>
+    <div class="subtitle" id="userLine">Loading…</div>
+
+    <div id="content"></div>
+  </main>
+
+  <script src="stories.js"></script>
+  <script>window.STORIES = STORIES;</script>
+  <script type="module" src="./js/sync.js"></script>
+  <script type="module" src="./js/account.js"></script>
+</body>
+</html>

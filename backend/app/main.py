@@ -5,7 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
 from .config import settings
-from .routers import cards, import_data, progress, streaks
+from .routers import account, cards, import_data, progress, streaks
 
 logger = logging.getLogger("kathalu")
 logging.basicConfig(level=logging.INFO)
@@ -40,6 +40,7 @@ app.include_router(cards.router)
 app.include_router(progress.router)
 app.include_router(streaks.router)
 app.include_router(import_data.router)
+app.include_router(account.router)
 
 
 @app.get("/health", tags=["meta"])

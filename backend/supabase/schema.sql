@@ -50,6 +50,17 @@ create table if not exists public.reading_days (
 create index if not exists reading_days_user_day_idx
   on public.reading_days (user_id, day desc);
 
+create table if not exists public.reading_sessions (
+  id            bigserial primary key,
+  user_id       uuid not null references auth.users(id) on delete cascade,
+  story_idx     int not null,
+  started_at    timestamptz not null default now(),
+  pct           int
+);
+
+create index if not exists reading_sessions_user_time_idx
+  on public.reading_sessions (user_id, started_at desc);
+
 create or replace function public.touch_updated_at()
 returns trigger language plpgsql as $$
 begin
